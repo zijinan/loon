@@ -30,6 +30,7 @@ IP-CIDR,47.110.187.87/32,REJECT,no-resolve
 ^https?:\/\/[\d\.:]*\/?(defaultts\.tc|vmind\.qqvideo\.tc|finderpdd\.video)\.qq\.com\/\w+ reject
 ^https?:\/\/apd-vlive\.apdcdn\.tc\.qq\.com\/vmind\.qqvideo\.tc\.qq\.com\/\w+ reject
 ^https?:\/\/apd-\w+\.v\.smtcdns\.com\/(defaultts|omts|vmind\.qqvideo)\.tc\.qq\.com\/\w+ reject
+^https?:\/\/vfiles\.gtimg\.cn\/(?:wuji_dashboard\/xy\/starter|wupload\/xy\/(?:starter|promotionTest)|wupload\/ad_control_config_test)\/ reject
 ^https?:\/\/vv\.video\.qq\.com\/(diff|get)vmind reject-dict
 ^https?:\/\/vv\.video\.qq\.com\/getvinfo response-body-replace-regex &sppreviewtype=\d(.*)&spsrt=\d &sppreviewtype=0$1&spsrt=0
 
@@ -39,8 +40,9 @@ http-response ^https?:\/\/i\.video\.qq\.com\/$ script-path=https://raw.githubuse
 http-request ^https?:\/\/iacc(?:\.rec)?\.qq\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-iacc-request-block,enable=true
 http-response ^https?:\/\/iacc(?:\.rec)?\.qq\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-iacc-response-block,enable=true
 http-request ^https?:\/\/tv2\.reachmax\.cn\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,timeout=10,tag=TencentVideo-reachmax-block,enable=true
+http-request ^https?:\/\/vfiles\.gtimg\.cn\/(?:wuji_dashboard\/xy\/starter|wupload\/xy\/(?:starter|promotionTest)|wupload\/ad_control_config_test)\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,timeout=10,tag=TencentVideo-startup-asset-block,enable=true
 http-request ^https?:\/\/rdelivery\.qq\.com\/(?:v1\/statistic\/report|v3\/config\/pull) script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=false,argument="aggressive=1",timeout=10,tag=TencentVideo-rdelivery-request-cleaner,enable=true
 http-response ^https?:\/\/rdelivery\.qq\.com\/v3\/config\/pull script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=false,argument="aggressive=1",timeout=10,tag=TencentVideo-rdelivery-response-cleaner,enable=true
 
 [MITM]
-hostname = vv.video.qq.com, i.video.qq.com, iacc.qq.com, iacc.rec.qq.com, rdelivery.qq.com, tv2.reachmax.cn
+hostname = vv.video.qq.com, i.video.qq.com, iacc.qq.com, iacc.rec.qq.com, rdelivery.qq.com, tv2.reachmax.cn, vfiles.gtimg.cn
