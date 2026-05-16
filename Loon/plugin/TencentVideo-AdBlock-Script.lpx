@@ -1,0 +1,42 @@
+#!name=腾讯视频去广告-脚本版
+#!desc=规则拦截广告素材，并用脚本清理 i.video.qq.com 返回体中的 AdFeed/GDT 标记。
+#!author=Codex
+#!date=2026-05-16
+
+[Rule]
+DOMAIN,pgdt.gtimg.cn,REJECT
+DOMAIN,adsmind.gdtimg.com,REJECT
+DOMAIN,qzs.gdtimg.com,REJECT
+DOMAIN,pgdt.ugdtimg.com,REJECT
+DOMAIN,mi.gdt.qq.com,REJECT
+DOMAIN,v.gdt.qq.com,REJECT
+DOMAIN-SUFFIX,gdt.qq.com,REJECT
+DOMAIN-SUFFIX,l.qq.com,REJECT
+DOMAIN-KEYWORD,adsmind,REJECT
+DOMAIN-KEYWORD,trace.qq.com,REJECT
+DOMAIN-KEYWORD,trace.video.qq.com,REJECT
+DOMAIN,info4.video.qq.com,REJECT
+DOMAIN,info6.video.qq.com,REJECT
+DOMAIN,ios.video.mpush.qq.com,REJECT
+DOMAIN,otheve.beacon.qq.com,REJECT
+DOMAIN,tpns.qq.com,REJECT
+DOMAIN,vv6.video.qq.com,REJECT
+IP-CIDR,47.110.187.87/32,REJECT,no-resolve
+
+[Rewrite]
+^https?:\/\/[\d\.:]*\/?(defaultts\.tc|vmind\.qqvideo\.tc|finderpdd\.video)\.qq\.com\/\w+ reject
+^https?:\/\/apd-vlive\.apdcdn\.tc\.qq\.com\/vmind\.qqvideo\.tc\.qq\.com\/\w+ reject
+^https?:\/\/apd-\w+\.v\.smtcdns\.com\/(defaultts|omts|vmind\.qqvideo)\.tc\.qq\.com\/\w+ reject
+^https?:\/\/vv\.video\.qq\.com\/(diff|get)vmind reject-dict
+^https?:\/\/vv\.video\.qq\.com\/getvinfo response-body-replace-regex &sppreviewtype=\d(.*)&spsrt=\d &sppreviewtype=0$1&spsrt=0
+
+[Script]
+http-response ^https?:\/\/i\.video\.qq\.com\/$ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=true,timeout=10,tag=腾讯视频-AdFeed清理,enable=true
+http-response ^https?:\/\/iacc(?:\.rec)?\.qq\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=true,timeout=10,tag=腾讯视频-iacc拦截,enable=true
+
+# 这个远程配置接口在抓包中很可疑，但它也可能承载正常配置；默认关闭。
+# 仍有开屏广告时，可把 enable=false 改成 enable=true 试用。
+http-response ^https?:\/\/rdelivery\.qq\.com\/v3\/config\/pull script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=false,argument="aggressive=1",timeout=10,tag=腾讯视频-rdelivery激进拦截,enable=false
+
+[MITM]
+hostname = vv.video.qq.com, i.video.qq.com, iacc.qq.com, iacc.rec.qq.com, rdelivery.qq.com
