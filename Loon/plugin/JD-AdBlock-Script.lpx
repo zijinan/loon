@@ -1,0 +1,37 @@
+#!name=JD AdBlock Script
+#!desc=Aggressive JD splash and in-app ad blocking for Loon. Built from user capture on 2026-05-16.
+#!author=Codex
+#!date=2026-05-16
+
+[Argument]
+jdad_enable = switch,true,false,tag=JD AdBlock
+
+[Rule]
+DOMAIN-SUFFIX,jzt.jd.com,REJECT
+DOMAIN-SUFFIX,img-x.jd.com,REJECT
+DOMAIN-SUFFIX,du.jd.com,REJECT
+DOMAIN-SUFFIX,c-nfa.jd.com,REJECT
+DOMAIN-SUFFIX,cm.jd.com,REJECT
+DOMAIN-SUFFIX,jddebug.com,REJECT
+DOMAIN-SUFFIX,policy.jd.com,REJECT
+DOMAIN-SUFFIX,kepler.jd.com,REJECT
+DOMAIN-SUFFIX,bdsp.x.jd.com,REJECT
+DOMAIN-SUFFIX,keplerapi.jd.com,REJECT
+DOMAIN-SUFFIX,ad.3.cn,REJECT
+DOMAIN-SUFFIX,jd.c-ptsp.com.cn,REJECT
+DOMAIN,dns.jd.com,REJECT
+IP-CIDR,101.124.19.122/32,REJECT,no-resolve
+IP-CIDR6,2402:db40:5100:1011::5/128,REJECT,no-resolve
+
+[Rewrite]
+^https?:\/\/[\w.-]+\.360buyimg\.com\/jzt\/ reject
+^https?:\/\/api\.m\.jd\.com\/client\.action\?functionId=getWidgetV1052 reject
+
+[Script]
+http-request ^https?:\/\/m\.360buyimg\.com\/mobilecms\/s\d+x\d+_jfs\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/JDSplash.js,timeout=10,tag=JD-fullscreen-material-block,enable={jdad_enable}
+http-request ^https?:\/\/second-floor-pro\.pf\.jd\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/JDSplash.js,timeout=10,tag=JD-second-floor-request-block,enable={jdad_enable}
+http-response ^https?:\/\/second-floor-pro\.pf\.jd\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/JDSplash.js,requires-body=true,timeout=10,tag=JD-second-floor-response-cleaner,enable={jdad_enable}
+http-response ^https?:\/\/api\.m\.jd\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/JDSplash.js,requires-body=true,timeout=10,tag=JD-api-ad-cleaner,enable={jdad_enable}
+
+[MITM]
+hostname = api.m.jd.com, m.360buyimg.com, second-floor-pro.pf.jd.com, dns.jd.com
