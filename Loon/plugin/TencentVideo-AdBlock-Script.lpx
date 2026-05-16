@@ -1,5 +1,5 @@
-#!name=腾讯视频去广告-脚本版
-#!desc=规则拦截广告素材，并用脚本清理 i.video.qq.com 返回体中的 AdFeed/GDT 标记。
+#!name=Tencent Video AdBlock Script
+#!desc=Aggressive Tencent Video splash/feed ad blocking for Loon. Built from user captures on 2026-05-16.
 #!author=Codex
 #!date=2026-05-16
 
@@ -7,20 +7,23 @@
 DOMAIN,pgdt.gtimg.cn,REJECT
 DOMAIN,adsmind.gdtimg.com,REJECT
 DOMAIN,qzs.gdtimg.com,REJECT
+DOMAIN,review.gdtimg.com,REJECT
 DOMAIN,pgdt.ugdtimg.com,REJECT
-DOMAIN,mi.gdt.qq.com,REJECT
-DOMAIN,v.gdt.qq.com,REJECT
+DOMAIN-SUFFIX,gdtimg.com,REJECT
 DOMAIN-SUFFIX,gdt.qq.com,REJECT
 DOMAIN-SUFFIX,l.qq.com,REJECT
-DOMAIN-KEYWORD,adsmind,REJECT
-DOMAIN-KEYWORD,trace.qq.com,REJECT
-DOMAIN-KEYWORD,trace.video.qq.com,REJECT
+DOMAIN-SUFFIX,reachmax.cn,REJECT
+DOMAIN-SUFFIX,smvy.cn,REJECT
+DOMAIN,c3.ni0.qq.com,REJECT
 DOMAIN,info4.video.qq.com,REJECT
 DOMAIN,info6.video.qq.com,REJECT
 DOMAIN,ios.video.mpush.qq.com,REJECT
 DOMAIN,otheve.beacon.qq.com,REJECT
 DOMAIN,tpns.qq.com,REJECT
 DOMAIN,vv6.video.qq.com,REJECT
+DOMAIN-KEYWORD,adsmind,REJECT
+DOMAIN-KEYWORD,trace.qq.com,REJECT
+DOMAIN-KEYWORD,trace.video.qq.com,REJECT
 IP-CIDR,47.110.187.87/32,REJECT,no-resolve
 
 [Rewrite]
@@ -31,12 +34,13 @@ IP-CIDR,47.110.187.87/32,REJECT,no-resolve
 ^https?:\/\/vv\.video\.qq\.com\/getvinfo response-body-replace-regex &sppreviewtype=\d(.*)&spsrt=\d &sppreviewtype=0$1&spsrt=0
 
 [Script]
-http-response ^https?:\/\/i\.video\.qq\.com\/$ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=true,timeout=10,tag=腾讯视频-AdFeed清理,enable=true
-http-response ^https?:\/\/iacc(?:\.rec)?\.qq\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=true,timeout=10,tag=腾讯视频-iacc拦截,enable=true
-
-# 这个远程配置接口在抓包中很可疑，但它也可能承载正常配置；默认关闭。
-# 仍有开屏广告时，可把 enable=false 改成 enable=true 试用。
-http-response ^https?:\/\/rdelivery\.qq\.com\/v3\/config\/pull script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=false,argument="aggressive=1",timeout=10,tag=腾讯视频-rdelivery激进拦截,enable=false
+http-request ^https?:\/\/i\.video\.qq\.com\/$ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-i.video-request-cleaner,enable=true
+http-response ^https?:\/\/i\.video\.qq\.com\/$ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-i.video-response-cleaner,enable=true
+http-request ^https?:\/\/iacc(?:\.rec)?\.qq\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-iacc-request-block,enable=true
+http-response ^https?:\/\/iacc(?:\.rec)?\.qq\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-iacc-response-block,enable=true
+http-request ^https?:\/\/tv2\.reachmax\.cn\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,timeout=10,tag=TencentVideo-reachmax-block,enable=true
+http-request ^https?:\/\/rdelivery\.qq\.com\/(?:v1\/statistic\/report|v3\/config\/pull) script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=false,argument="aggressive=1",timeout=10,tag=TencentVideo-rdelivery-request-cleaner,enable=true
+http-response ^https?:\/\/rdelivery\.qq\.com\/v3\/config\/pull script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=false,argument="aggressive=1",timeout=10,tag=TencentVideo-rdelivery-response-cleaner,enable=true
 
 [MITM]
-hostname = vv.video.qq.com, i.video.qq.com, iacc.qq.com, iacc.rec.qq.com, rdelivery.qq.com
+hostname = vv.video.qq.com, i.video.qq.com, iacc.qq.com, iacc.rec.qq.com, rdelivery.qq.com, tv2.reachmax.cn
