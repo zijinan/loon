@@ -60,12 +60,17 @@
       "vfiles.gtimg.cn",
       "wfiles.gtimg.cn",
       "vip.image.video.qpic.cn",
+      "vmmp.qpic.cn",
+      "gif.media.qpic.cn",
+      "ugd.gtimg.com",
       "wuji_dashboard/xy/starter",
       "wupload/xy/starter",
       "film.video.qq.com",
       "yuanbao.tencent.com",
       "iwan.qq.com",
       "sample_rate",
+      "ad_type",
+      "ad_device_platform",
     ];
 
     const text = isBinary ? asciiPreview(body) : body;
@@ -107,6 +112,9 @@
       changed += replaceAscii(bytes, "vfiles.gtimg.cn", "invalid.localxx");
       changed += replaceAscii(bytes, "wfiles.gtimg.cn", "invalid.localxx");
       changed += replaceAscii(bytes, "vip.image.video.qpic.cn", "nil.image.video.qpic.cn");
+      changed += replaceAscii(bytes, "vmmp.qpic.cn", "null.qpic.cn");
+      changed += replaceAscii(bytes, "gif.media.qpic.cn", "nil.media.qpic.cn");
+      changed += replaceAscii(bytes, "ugd.gtimg.com", "nil.gtimg.com");
       changed += replaceAscii(bytes, "wp.smvy.cn", "invalid.cn");
       changed += replaceAscii(bytes, "c3.ni0.qq.com", "c3.nil.qq.com");
       changed += replaceAscii(bytes, "promotionTest", "promotionNone");
@@ -120,6 +128,8 @@
       changed += replaceAscii(bytes, "film.video.qq.com", "null.video.qq.com");
       changed += replaceAscii(bytes, "yuanbao.tencent.com", "invalid.tencent.com");
       changed += replaceAscii(bytes, "iwan.qq.com", "null.qq.com");
+      changed += replaceAscii(bytes, "ad_type", "no_type");
+      changed += replaceAscii(bytes, "ad_device_platform", "no_device_platform");
       changed += replaceAscii(bytes, '"sample_rate":0.01', '"sample_rate":0.00');
       changed += replaceAscii(bytes, '"sample_rate":0.05', '"sample_rate":0.00');
       changed += replaceAscii(bytes, '"sample_rate":0.1', '"sample_rate":0.0');
@@ -164,6 +174,9 @@
     next = sameLengthReplace(next, "vfiles.gtimg.cn", "invalid.localxx");
     next = sameLengthReplace(next, "wfiles.gtimg.cn", "invalid.localxx");
     next = sameLengthReplace(next, "vip.image.video.qpic.cn", "nil.image.video.qpic.cn");
+    next = sameLengthReplace(next, "vmmp.qpic.cn", "null.qpic.cn");
+    next = sameLengthReplace(next, "gif.media.qpic.cn", "nil.media.qpic.cn");
+    next = sameLengthReplace(next, "ugd.gtimg.com", "nil.gtimg.com");
     next = sameLengthReplace(next, "wp.smvy.cn", "invalid.cn");
     next = sameLengthReplace(next, "c3.ni0.qq.com", "c3.nil.qq.com");
     next = sameLengthReplace(next, "promotionTest", "promotionNone");
@@ -177,6 +190,8 @@
     next = sameLengthReplace(next, "film.video.qq.com", "null.video.qq.com");
     next = sameLengthReplace(next, "yuanbao.tencent.com", "invalid.tencent.com");
     next = sameLengthReplace(next, "iwan.qq.com", "null.qq.com");
+    next = sameLengthReplace(next, "ad_type", "no_type");
+    next = sameLengthReplace(next, "ad_device_platform", "no_device_platform");
     next = sameLengthReplace(next, '"sample_rate":0.01', '"sample_rate":0.00');
     next = sameLengthReplace(next, '"sample_rate":0.05', '"sample_rate":0.00');
     next = sameLengthReplace(next, '"sample_rate":0.1', '"sample_rate":0.0');
@@ -246,6 +261,9 @@ function handleRequest(url, host, aggressive) {
     "reward_ad_ssp",
     "adService",
     "AccessPromotion",
+    "ad_screen",
+    "ad_type",
+    "ad_device_platform",
   ];
 
   if (!markers.some((marker) => text.includes(marker))) {
@@ -268,6 +286,9 @@ function handleRequest(url, host, aggressive) {
     changed += replaceAscii(bytes, "reward_ad_ssp", "reward_no_ssp");
     changed += replaceAscii(bytes, "adService", "noService");
     changed += replaceAscii(bytes, "AccessPromotion", "IgnorePromotion");
+    changed += replaceAscii(bytes, "ad_screen", "no_screen");
+    changed += replaceAscii(bytes, "ad_type", "no_type");
+    changed += replaceAscii(bytes, "ad_device_platform", "no_device_platform");
 
     if (changed === 0) return $done({});
     return $done({
@@ -282,6 +303,9 @@ function handleRequest(url, host, aggressive) {
   next = sameLengthReplace(next, "reward_ad_ssp", "reward_no_ssp");
   next = sameLengthReplace(next, "adService", "noService");
   next = sameLengthReplace(next, "AccessPromotion", "IgnorePromotion");
+  next = sameLengthReplace(next, "ad_screen", "no_screen");
+  next = sameLengthReplace(next, "ad_type", "no_type");
+  next = sameLengthReplace(next, "ad_device_platform", "no_device_platform");
 
   if (next === body) return $done({});
   return $done({
