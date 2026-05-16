@@ -21,11 +21,16 @@ DOMAIN,ios.video.mpush.qq.com,REJECT
 DOMAIN,otheve.beacon.qq.com,REJECT
 DOMAIN,tpns.qq.com,REJECT
 DOMAIN,vv6.video.qq.com,REJECT
+DOMAIN,vfiles.gtimg.cn,REJECT
+DOMAIN,wfiles.gtimg.cn,REJECT
+DOMAIN,vip.image.video.qpic.cn,REJECT
 DOMAIN,snowflake.qq.com,REJECT
 DOMAIN,galileotelemetry.tencent.com,REJECT
 DOMAIN,szmg.qq.com,REJECT
 DOMAIN,yuanbao.tencent.com,REJECT
 DOMAIN-SUFFIX,iwan.qq.com,REJECT
+DOMAIN,film.qq.com,REJECT
+DOMAIN-SUFFIX,manju.v.qq.com,REJECT
 DOMAIN-KEYWORD,adsmind,REJECT
 DOMAIN-KEYWORD,trace.qq.com,REJECT
 DOMAIN-KEYWORD,trace.video.qq.com,REJECT
@@ -35,8 +40,9 @@ IP-CIDR,47.110.187.87/32,REJECT,no-resolve
 ^https?:\/\/[\d\.:]*\/?(defaultts\.tc|vmind\.qqvideo\.tc|finderpdd\.video)\.qq\.com\/\w+ reject
 ^https?:\/\/apd-vlive\.apdcdn\.tc\.qq\.com\/vmind\.qqvideo\.tc\.qq\.com\/\w+ reject
 ^https?:\/\/apd-\w+\.v\.smtcdns\.com\/(defaultts|omts|vmind\.qqvideo)\.tc\.qq\.com\/\w+ reject
-^https?:\/\/vfiles\.gtimg\.cn\/(?:wuji_dashboard\/xy\/starter|wupload\/xy\/(?:starter|promotionTest)|wupload\/ad_control_config_test)\/ reject
+^https?:\/\/[vw]files\.gtimg\.cn\/(?:wuji_dashboard\/xy\/starter|wupload\/xy\/(?:starter|promotionTest|universal)|wupload\/ad_control_config_test|wupload\/vip\.vip_area_level_opration(?:_test)?)\/ reject
 ^https?:\/\/vip\.image\.video\.qpic\.cn\/wupload\/xy\/promotionTest\/ reject
+^https?:\/\/film\.video\.qq\.com\/(?:x|h5|magic-act|weixin)\/ reject
 ^https?:\/\/content\.rconfig\.qq\.com\/log_config\/ reject
 ^https?:\/\/tips\.video\.qq\.com\/device\/registerDevice reject
 ^https?:\/\/vv\.video\.qq\.com\/(diff|get)vmind reject-dict
@@ -48,10 +54,10 @@ http-response ^https?:\/\/i\.video\.qq\.com\/$ script-path=https://raw.githubuse
 http-request ^https?:\/\/iacc(?:\.rec)?\.qq\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-iacc-request-block,enable=true
 http-response ^https?:\/\/iacc(?:\.rec)?\.qq\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-iacc-response-block,enable=true
 http-request ^https?:\/\/tv2\.reachmax\.cn\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,timeout=10,tag=TencentVideo-reachmax-block,enable=true
-http-request ^https?:\/\/vfiles\.gtimg\.cn\/(?:wuji_dashboard\/xy\/starter|wupload\/xy\/(?:starter|promotionTest)|wupload\/ad_control_config_test)\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,timeout=10,tag=TencentVideo-startup-asset-block,enable=true
+http-request ^https?:\/\/[vw]files\.gtimg\.cn\/(?:wuji_dashboard\/xy\/starter|wupload\/xy\/(?:starter|promotionTest|universal)|wupload\/ad_control_config_test|wupload\/vip\.vip_area_level_opration(?:_test)?)\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,timeout=10,tag=TencentVideo-startup-asset-block,enable=true
 http-request ^https?:\/\/rdelivery\.qq\.com\/(?:v1\/statistic\/report|v3\/config\/pull) script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=false,argument="aggressive=1",timeout=10,tag=TencentVideo-rdelivery-request-cleaner,enable=true
 http-response ^https?:\/\/rdelivery\.qq\.com\/v3\/config\/pull script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=false,argument="aggressive=1",timeout=10,tag=TencentVideo-rdelivery-response-cleaner,enable=true
 http-response ^https?:\/\/config\.ab\.qq\.com\/tab\/GetTabRemoteConfig script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=false,timeout=10,tag=TencentVideo-abconfig-sampling-cleaner,enable=true
 
 [MITM]
-hostname = vv.video.qq.com, i.video.qq.com, iacc.qq.com, iacc.rec.qq.com, rdelivery.qq.com, tv2.reachmax.cn, vfiles.gtimg.cn, vip.image.video.qpic.cn, content.rconfig.qq.com, tips.video.qq.com, config.ab.qq.com
+hostname = vv.video.qq.com, i.video.qq.com, iacc.qq.com, iacc.rec.qq.com, rdelivery.qq.com, tv2.reachmax.cn, vfiles.gtimg.cn, wfiles.gtimg.cn, vip.image.video.qpic.cn, film.video.qq.com, content.rconfig.qq.com, tips.video.qq.com, config.ab.qq.com

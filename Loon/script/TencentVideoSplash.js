@@ -57,6 +57,11 @@
       "ad.vipinfo",
       "ad.channel",
       "ad.userinfo",
+      "vfiles.gtimg.cn",
+      "wfiles.gtimg.cn",
+      "vip.image.video.qpic.cn",
+      "wuji_dashboard/xy/starter",
+      "wupload/xy/starter",
       "film.video.qq.com",
       "yuanbao.tencent.com",
       "iwan.qq.com",
@@ -100,6 +105,8 @@
       changed += replaceAscii(bytes, "gdt_report.fcg", "nil_report.fcg");
       changed += replaceAscii(bytes, "review.gdtimg.com", "invalid.invalidxx");
       changed += replaceAscii(bytes, "vfiles.gtimg.cn", "invalid.localxx");
+      changed += replaceAscii(bytes, "wfiles.gtimg.cn", "invalid.localxx");
+      changed += replaceAscii(bytes, "vip.image.video.qpic.cn", "nil.image.video.qpic.cn");
       changed += replaceAscii(bytes, "wp.smvy.cn", "invalid.cn");
       changed += replaceAscii(bytes, "c3.ni0.qq.com", "c3.nil.qq.com");
       changed += replaceAscii(bytes, "promotionTest", "promotionNone");
@@ -107,6 +114,9 @@
       changed += replaceAscii(bytes, "ad.vipinfo", "no.vipinfo");
       changed += replaceAscii(bytes, "ad.channel", "no.channel");
       changed += replaceAscii(bytes, "ad.userinfo", "no.userinfo");
+      changed += replaceAscii(bytes, "wuji_dashboard/xy/starter", "wuji_dashboard/xy/blocked");
+      changed += replaceAscii(bytes, "wupload/xy/starter", "wupload/xy/blocked");
+      changed += replaceAscii(bytes, "vip.vip_area_level_opration", "nil.vip_area_level_opration");
       changed += replaceAscii(bytes, "film.video.qq.com", "null.video.qq.com");
       changed += replaceAscii(bytes, "yuanbao.tencent.com", "invalid.tencent.com");
       changed += replaceAscii(bytes, "iwan.qq.com", "null.qq.com");
@@ -152,6 +162,8 @@
     next = sameLengthReplace(next, "gdt_report.fcg", "nil_report.fcg");
     next = sameLengthReplace(next, "review.gdtimg.com", "invalid.invalidxx");
     next = sameLengthReplace(next, "vfiles.gtimg.cn", "invalid.localxx");
+    next = sameLengthReplace(next, "wfiles.gtimg.cn", "invalid.localxx");
+    next = sameLengthReplace(next, "vip.image.video.qpic.cn", "nil.image.video.qpic.cn");
     next = sameLengthReplace(next, "wp.smvy.cn", "invalid.cn");
     next = sameLengthReplace(next, "c3.ni0.qq.com", "c3.nil.qq.com");
     next = sameLengthReplace(next, "promotionTest", "promotionNone");
@@ -159,6 +171,9 @@
     next = sameLengthReplace(next, "ad.vipinfo", "no.vipinfo");
     next = sameLengthReplace(next, "ad.channel", "no.channel");
     next = sameLengthReplace(next, "ad.userinfo", "no.userinfo");
+    next = sameLengthReplace(next, "wuji_dashboard/xy/starter", "wuji_dashboard/xy/blocked");
+    next = sameLengthReplace(next, "wupload/xy/starter", "wupload/xy/blocked");
+    next = sameLengthReplace(next, "vip.vip_area_level_opration", "nil.vip_area_level_opration");
     next = sameLengthReplace(next, "film.video.qq.com", "null.video.qq.com");
     next = sameLengthReplace(next, "yuanbao.tencent.com", "invalid.tencent.com");
     next = sameLengthReplace(next, "iwan.qq.com", "null.qq.com");
@@ -285,8 +300,8 @@ function isIaccHost(host) {
 }
 
 function isStartupAssetUrl(host, url) {
-  if (host !== "vfiles.gtimg.cn") return false;
-  return /\/(?:wuji_dashboard\/xy\/starter|wupload\/xy\/(?:starter|promotionTest)|wupload\/ad_control_config_test)\//i.test(url);
+  if (host !== "vfiles.gtimg.cn" && host !== "wfiles.gtimg.cn") return false;
+  return /\/(?:wuji_dashboard\/xy\/starter|wupload\/xy\/(?:starter|promotionTest|universal)|wupload\/ad_control_config_test|wupload\/vip\.vip_area_level_opration(?:_test)?)\//i.test(url);
 }
 
 function finishRequestWithResponse(response) {
