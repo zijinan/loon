@@ -62,6 +62,7 @@ function handleResponse(url, host) {
   const functionId = getFunctionId(url, ($request && $request.body) || "");
   const before = JSON.stringify(obj);
 
+  cleanDeliveryLayer(obj, functionId);
   cleanStartupResponse(obj, functionId);
   cleanStrategy(obj);
   cleanBasicConfig(obj);
@@ -80,6 +81,15 @@ function handleResponse(url, host) {
     headers: passHeaders($response.headers),
     body: after,
   });
+}
+
+function cleanDeliveryLayer(obj, functionId) {
+  const id = String(functionId || "").toLowerCase();
+  if (id !== "deliverlayer" && id !== "ordertrackbusiness") {
+    return;
+  }
+
+  delete obj.bannerInfo;
 }
 
 function cleanStartupResponse(obj, functionId) {
@@ -211,6 +221,18 @@ function pruneFloors(container, blocked) {
       delete floor.data.commonPopup;
       delete floor.data.commonPopup_dynamic;
       delete floor.data.floatLayer;
+      if (floor.mId === "virtualServiceCenter" && Array.isArray(floor.data.virtualServiceCenters)) {
+        for (const item of floor.data.virtualServiceCenters) {
+          if (Array.isArray(item.serviceList)) {
+            item.serviceList = item.serviceList.filter((card) => !isFeaturedDealTitle(card && card.serviceTitle));
+          }
+        }
+      }
+      if (floor.mId === "customerServiceFloor") {
+        delete floor.data.moreIcon;
+        delete floor.data.moreIcon_dark;
+        if ("moreText" in floor.data) floor.data.moreText = " ";
+      }
       if (Array.isArray(floor.data.commonTips)) floor.data.commonTips = [];
       if (Array.isArray(floor.data.commonWindows)) floor.data.commonWindows = [];
       if (floor.data.commentRemindInfo && Array.isArray(floor.data.commentRemindInfo.infos)) {
@@ -220,6 +242,11 @@ function pruneFloors(container, blocked) {
     }
     return true;
   });
+}
+
+function isFeaturedDealTitle(title) {
+  if (typeof title !== "string") return false;
+  return title.indexOf("\u7cbe\u9009\u7279\u60e0") >= 0;
 }
 
 function stripCommonAdFields(value, functionId) {
