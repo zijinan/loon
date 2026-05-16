@@ -195,6 +195,14 @@
 function handleRequest(url, host, aggressive) {
   const body = $request && $request.body;
 
+  if (isStartupPackageUrl(host, url)) {
+    return finishRequestWithResponse({
+      status: 200,
+      headers: zipHeaders(),
+      body: emptyZipBody(),
+    });
+  }
+
   if (isStartupAssetUrl(host, url)) {
     return finishRequestWithResponse({
       status: 200,
@@ -312,6 +320,13 @@ function isStartupAssetUrl(host, url) {
   return /\/(?:wuji_dashboard\/xy\/(?:starter|blocked)|wupload\/xy\/(?:starter|blocked|promotionTest|promotionNone|universal)|wupload\/ad_control_config_test|wupload\/vip\.vip_area_level_opration(?:_test)?)(?:\/|$)/i.test(url);
 }
 
+function isStartupPackageUrl(host, url) {
+  if (!/^(?:vfiles\.gtimg\.cn|wfiles\.gtimg\.cn|invalid\.localxx)$/i.test(host)) {
+    return false;
+  }
+  return /\/wuji_dashboard\/xy\/(?:starter|blocked)\/[^/?#]+\.zip(?:[?#]|$)/i.test(url);
+}
+
 function finishRequestWithResponse(response) {
   return $done({ response });
 }
@@ -341,8 +356,23 @@ function gifHeaders() {
   };
 }
 
+function zipHeaders() {
+  return {
+    "Accept-Ranges": "bytes",
+    "Cache-Control": "public, max-age=31536000",
+    "Content-Length": "22",
+    "Content-Type": "application/zip",
+    "ETag": '"tencent-video-empty-startup-package"',
+    "Last-Modified": "Mon, 01 Jan 2024 00:00:00 GMT",
+  };
+}
+
 function transparentGifBody() {
   return "GIF89a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\x00\x00\x00!\xF9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;";
+}
+
+function emptyZipBody() {
+  return "PK\x05\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 }
 
 function passHeaders(headers) {
