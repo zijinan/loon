@@ -17,6 +17,7 @@ DOMAIN-SUFFIX,policy.jd.com,REJECT
 DOMAIN-SUFFIX,kepler.jd.com,REJECT
 DOMAIN-SUFFIX,bdsp.x.jd.com,REJECT
 DOMAIN-SUFFIX,keplerapi.jd.com,REJECT
+DOMAIN-SUFFIX,mapi.m.jd.com,REJECT
 DOMAIN-SUFFIX,ad.3.cn,REJECT
 DOMAIN-SUFFIX,jd.c-ptsp.com.cn,REJECT
 DOMAIN,dns.jd.com,REJECT
