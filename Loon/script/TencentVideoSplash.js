@@ -54,6 +54,13 @@
       "ad_duration",
       "promotionTest",
       "ad_control_config_test",
+      "ad.vipinfo",
+      "ad.channel",
+      "ad.userinfo",
+      "film.video.qq.com",
+      "yuanbao.tencent.com",
+      "iwan.qq.com",
+      "sample_rate",
     ];
 
     const text = isBinary ? asciiPreview(body) : body;
@@ -95,7 +102,19 @@
       changed += replaceAscii(bytes, "vfiles.gtimg.cn", "invalid.localxx");
       changed += replaceAscii(bytes, "wp.smvy.cn", "invalid.cn");
       changed += replaceAscii(bytes, "c3.ni0.qq.com", "c3.nil.qq.com");
+      changed += replaceAscii(bytes, "promotionTest", "promotionNone");
       changed += replaceAscii(bytes, "ad_control_config_test", "no_control_config_test");
+      changed += replaceAscii(bytes, "ad.vipinfo", "no.vipinfo");
+      changed += replaceAscii(bytes, "ad.channel", "no.channel");
+      changed += replaceAscii(bytes, "ad.userinfo", "no.userinfo");
+      changed += replaceAscii(bytes, "film.video.qq.com", "null.video.qq.com");
+      changed += replaceAscii(bytes, "yuanbao.tencent.com", "invalid.tencent.com");
+      changed += replaceAscii(bytes, "iwan.qq.com", "null.qq.com");
+      changed += replaceAscii(bytes, '"sample_rate":0.01', '"sample_rate":0.00');
+      changed += replaceAscii(bytes, '"sample_rate":0.05', '"sample_rate":0.00');
+      changed += replaceAscii(bytes, '"sample_rate":0.1', '"sample_rate":0.0');
+      changed += replaceAscii(bytes, '"sample_rate":0.2', '"sample_rate":0.0');
+      changed += replaceAscii(bytes, '"sample_rate":0.3', '"sample_rate":0.0');
 
       if (changed === 0) return $done({});
       return finishResponse({
@@ -135,7 +154,19 @@
     next = sameLengthReplace(next, "vfiles.gtimg.cn", "invalid.localxx");
     next = sameLengthReplace(next, "wp.smvy.cn", "invalid.cn");
     next = sameLengthReplace(next, "c3.ni0.qq.com", "c3.nil.qq.com");
+    next = sameLengthReplace(next, "promotionTest", "promotionNone");
     next = sameLengthReplace(next, "ad_control_config_test", "no_control_config_test");
+    next = sameLengthReplace(next, "ad.vipinfo", "no.vipinfo");
+    next = sameLengthReplace(next, "ad.channel", "no.channel");
+    next = sameLengthReplace(next, "ad.userinfo", "no.userinfo");
+    next = sameLengthReplace(next, "film.video.qq.com", "null.video.qq.com");
+    next = sameLengthReplace(next, "yuanbao.tencent.com", "invalid.tencent.com");
+    next = sameLengthReplace(next, "iwan.qq.com", "null.qq.com");
+    next = sameLengthReplace(next, '"sample_rate":0.01', '"sample_rate":0.00');
+    next = sameLengthReplace(next, '"sample_rate":0.05', '"sample_rate":0.00');
+    next = sameLengthReplace(next, '"sample_rate":0.1', '"sample_rate":0.0');
+    next = sameLengthReplace(next, '"sample_rate":0.2', '"sample_rate":0.0');
+    next = sameLengthReplace(next, '"sample_rate":0.3', '"sample_rate":0.0');
 
     if (next === body) return $done({});
     return finishResponse({
