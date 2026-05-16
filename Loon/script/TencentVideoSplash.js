@@ -213,6 +213,14 @@
 function handleRequest(url, host, aggressive) {
   const body = $request && $request.body;
 
+  if (isBlankAssetHost(host)) {
+    return finishRequestWithResponse({
+      status: 200,
+      headers: gifHeaders(),
+      body: transparentGifBody(),
+    });
+  }
+
   if (isIaccHost(host)) {
     return finishRequestWithResponse({
       status: 204,
@@ -328,6 +336,10 @@ function isStartupAssetUrl(host, url) {
   return /\/(?:wuji_dashboard\/xy\/starter|wupload\/xy\/(?:starter|promotionTest|universal)|wupload\/ad_control_config_test|wupload\/vip\.vip_area_level_opration(?:_test)?)\//i.test(url);
 }
 
+function isBlankAssetHost(host) {
+  return /^(?:invalid\.localxx|null\.qpic\.cn|nil\.media\.qpic\.cn|nil\.gtimg\.com|vfiles\.gtimg\.cn|wfiles\.gtimg\.cn|vip\.image\.video\.qpic\.cn|vmmp\.qpic\.cn|gif\.media\.qpic\.cn|ugd\.gtimg\.com)$/i.test(host);
+}
+
 function finishRequestWithResponse(response) {
   return $done({ response });
 }
@@ -348,6 +360,17 @@ function jsonHeaders() {
     "Cache-Control": "no-store",
     "Content-Type": "application/json; charset=utf-8",
   };
+}
+
+function gifHeaders() {
+  return {
+    "Cache-Control": "no-store",
+    "Content-Type": "image/gif",
+  };
+}
+
+function transparentGifBody() {
+  return "GIF89a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\x00\x00\x00!\xF9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;";
 }
 
 function passHeaders(headers) {
