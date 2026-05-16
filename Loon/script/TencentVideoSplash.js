@@ -13,14 +13,23 @@
   const host = getHost(url);
   const argument = typeof $argument === "string" ? $argument : "";
   const aggressive = /(?:^|[&,])aggressive=1(?:$|[&,])/.test(argument);
+  const isResponse = typeof $response !== "undefined" && $response;
 
   try {
+    if (!isResponse) {
+      return handleRequest(host, aggressive);
+    }
+
     if (isIaccHost(host)) {
-      return blockEmpty("blocked iacc ad endpoint");
+      return finishResponse({
+        status: 204,
+        headers: emptyHeaders(),
+        body: "",
+      });
     }
 
     if (aggressive && host === "rdelivery.qq.com") {
-      return $done({
+      return finishResponse({
         status: 200,
         headers: jsonHeaders(),
         body: '{"code":0,"configs":[],"msg":"ok"}',
@@ -39,6 +48,10 @@
       "gdt.qq.com",
       "l.qq.com",
       "adsplash",
+      "ad_block_2",
+      "_ad_insert_mix_block",
+      "mod_adfeed",
+      "ad_duration",
     ];
 
     const text = isBinary ? asciiPreview(body) : body;
@@ -60,9 +73,30 @@
       changed += replaceAscii(bytes, "AdFeedInfo", "NoFeedInfo");
       changed += replaceAscii(bytes, "view_ad_ssp", "void_ad_ssp");
       changed += replaceAscii(bytes, "adsplash", "nosplash");
+      changed += replaceAscii(bytes, "ad_block_2", "no_block_2");
+      changed += replaceAscii(bytes, "_ad_insert_mix_block", "_no_insert_mix_block");
+      changed += replaceAscii(bytes, "mod_adfeed", "mod_nofeed");
+      changed += replaceAscii(bytes, "ad_focus", "no_focus");
+      changed += replaceAscii(bytes, "ad_duration", "no_duration");
+      changed += replaceAscii(bytes, "ad_reportkey", "no_reportkey");
+      changed += replaceAscii(bytes, "ad_request_id", "no_request_id");
+      changed += replaceAscii(bytes, "ad_group_id", "no_group_id");
+      changed += replaceAscii(bytes, "ad_product_id", "no_product_id");
+      changed += replaceAscii(bytes, "ad_card_type", "no_card_type");
+      changed += replaceAscii(bytes, "ad_action_type", "no_action_type");
+      changed += replaceAscii(bytes, "advertiser", "xvertiser0");
+      changed += replaceAscii(bytes, "creative", "inactive");
+      changed += replaceAscii(bytes, "qz_gdt", "qz_nil");
+      changed += replaceAscii(bytes, "gdt_click.fcg", "nil_click.fcg");
+      changed += replaceAscii(bytes, "gdt_report.fcg", "nil_report.fcg");
+      changed += replaceAscii(bytes, "review.gdtimg.com", "invalid.invalidxx");
+      changed += replaceAscii(bytes, "vfiles.gtimg.cn", "invalid.localxx");
+      changed += replaceAscii(bytes, "wp.smvy.cn", "invalid.cn");
+      changed += replaceAscii(bytes, "c3.ni0.qq.com", "c3.nil.qq.com");
+      changed += replaceAscii(bytes, "ad_control_config_test", "no_control_config_test");
 
       if (changed === 0) return $done({});
-      return $done({
+      return finishResponse({
         status: $response.status,
         headers: passHeaders($response.headers),
         body: bytes,
@@ -79,9 +113,30 @@
     next = sameLengthReplace(next, "AdFeedInfo", "NoFeedInfo");
     next = sameLengthReplace(next, "view_ad_ssp", "void_ad_ssp");
     next = sameLengthReplace(next, "adsplash", "nosplash");
+    next = sameLengthReplace(next, "ad_block_2", "no_block_2");
+    next = sameLengthReplace(next, "_ad_insert_mix_block", "_no_insert_mix_block");
+    next = sameLengthReplace(next, "mod_adfeed", "mod_nofeed");
+    next = sameLengthReplace(next, "ad_focus", "no_focus");
+    next = sameLengthReplace(next, "ad_duration", "no_duration");
+    next = sameLengthReplace(next, "ad_reportkey", "no_reportkey");
+    next = sameLengthReplace(next, "ad_request_id", "no_request_id");
+    next = sameLengthReplace(next, "ad_group_id", "no_group_id");
+    next = sameLengthReplace(next, "ad_product_id", "no_product_id");
+    next = sameLengthReplace(next, "ad_card_type", "no_card_type");
+    next = sameLengthReplace(next, "ad_action_type", "no_action_type");
+    next = sameLengthReplace(next, "advertiser", "xvertiser0");
+    next = sameLengthReplace(next, "creative", "inactive");
+    next = sameLengthReplace(next, "qz_gdt", "qz_nil");
+    next = sameLengthReplace(next, "gdt_click.fcg", "nil_click.fcg");
+    next = sameLengthReplace(next, "gdt_report.fcg", "nil_report.fcg");
+    next = sameLengthReplace(next, "review.gdtimg.com", "invalid.invalidxx");
+    next = sameLengthReplace(next, "vfiles.gtimg.cn", "invalid.localxx");
+    next = sameLengthReplace(next, "wp.smvy.cn", "invalid.cn");
+    next = sameLengthReplace(next, "c3.ni0.qq.com", "c3.nil.qq.com");
+    next = sameLengthReplace(next, "ad_control_config_test", "no_control_config_test");
 
     if (next === body) return $done({});
-    return $done({
+    return finishResponse({
       status: $response.status,
       headers: passHeaders($response.headers),
       body: next,
@@ -92,6 +147,93 @@
   }
 })();
 
+function handleRequest(host, aggressive) {
+  const body = $request && $request.body;
+
+  if (isIaccHost(host)) {
+    return finishRequestWithResponse({
+      status: 204,
+      headers: emptyHeaders(),
+      body: "",
+    });
+  }
+
+  if (host === "tv2.reachmax.cn") {
+    return finishRequestWithResponse({
+      status: 204,
+      headers: emptyHeaders(),
+      body: "",
+    });
+  }
+
+  if (host === "rdelivery.qq.com") {
+    const text = typeof body === "string" ? body : body ? asciiPreview(body) : "";
+    if (aggressive || /splash|app_cold_launch|adsplash|ad_/i.test(text)) {
+      return finishRequestWithResponse({
+        status: 200,
+        headers: jsonHeaders(),
+        body: '{"code":0,"message":"suc","sampling_list":[],"max_batch_size":0,"report_delay":0}',
+      });
+    }
+    return $done({});
+  }
+
+  if (host !== "i.video.qq.com" || !body) {
+    return $done({});
+  }
+
+  const isBinary = typeof body !== "string";
+  const text = isBinary ? asciiPreview(body) : body;
+  const markers = [
+    "AdRequestContextInfo",
+    "view_ad_ssp",
+    "reward_ad_ssp",
+    "adService",
+    "AccessPromotion",
+  ];
+
+  if (!markers.some((marker) => text.includes(marker))) {
+    return $done({});
+  }
+
+  if (/reward_ad_ssp|GetFollowHeartRewardAdInfo|reward_free_mode/.test(text)) {
+    return finishRequestWithResponse({
+      status: 204,
+      headers: emptyHeaders(),
+      body: "",
+    });
+  }
+
+  if (isBinary) {
+    const bytes = toUint8Array(body);
+    let changed = 0;
+    changed += replaceAscii(bytes, "AdRequestContextInfo", "NoRequestContextInfo");
+    changed += replaceAscii(bytes, "view_ad_ssp", "void_ad_ssp");
+    changed += replaceAscii(bytes, "reward_ad_ssp", "reward_no_ssp");
+    changed += replaceAscii(bytes, "adService", "noService");
+    changed += replaceAscii(bytes, "AccessPromotion", "IgnorePromotion");
+
+    if (changed === 0) return $done({});
+    return $done({
+      headers: passHeaders($request.headers),
+      body: bytes,
+    });
+  }
+
+  let next = body;
+  next = sameLengthReplace(next, "AdRequestContextInfo", "NoRequestContextInfo");
+  next = sameLengthReplace(next, "view_ad_ssp", "void_ad_ssp");
+  next = sameLengthReplace(next, "reward_ad_ssp", "reward_no_ssp");
+  next = sameLengthReplace(next, "adService", "noService");
+  next = sameLengthReplace(next, "AccessPromotion", "IgnorePromotion");
+
+  if (next === body) return $done({});
+  return $done({
+    headers: passHeaders($request.headers),
+    body: next,
+  });
+}
+
 function getHost(url) {
   const match = String(url).match(/^https?:\/\/([^/:?#]+)/i);
   return match ? match[1].toLowerCase() : "";
@@ -101,16 +243,19 @@ function isIaccHost(host) {
   return host === "iacc.qq.com" || host === "iacc.rec.qq.com";
 }
 
-function blockEmpty(reason) {
-  console.log(`[TencentVideoSplash] ${reason}`);
-  return $done({
-    status: 204,
-    headers: {
-      "Cache-Control": "no-store",
-      "Content-Type": "text/plain; charset=utf-8",
-    },
-    body: "",
-  });
+function finishRequestWithResponse(response) {
+  return $done({ response });
+}
+
+function finishResponse(response) {
+  return $done(response);
+}
+
+function emptyHeaders() {
+  return {
+    "Cache-Control": "no-store",
+    "Content-Type": "text/plain; charset=utf-8",
+  };
 }
 
 function jsonHeaders() {
