@@ -17,7 +17,7 @@
 
   try {
     if (!isResponse) {
-      return handleRequest(host, aggressive);
+      return handleRequest(url, host, aggressive);
     }
 
     if (isIaccHost(host)) {
@@ -52,6 +52,8 @@
       "_ad_insert_mix_block",
       "mod_adfeed",
       "ad_duration",
+      "promotionTest",
+      "ad_control_config_test",
     ];
 
     const text = isBinary ? asciiPreview(body) : body;
@@ -147,7 +149,7 @@
   }
 })();
 
-function handleRequest(host, aggressive) {
+function handleRequest(url, host, aggressive) {
   const body = $request && $request.body;
 
   if (isIaccHost(host)) {
@@ -159,6 +161,14 @@ function handleRequest(host, aggressive) {
   }
 
   if (host === "tv2.reachmax.cn") {
+    return finishRequestWithResponse({
+      status: 204,
+      headers: emptyHeaders(),
+      body: "",
+    });
+  }
+
+  if (isStartupAssetUrl(host, url)) {
     return finishRequestWithResponse({
       status: 204,
       headers: emptyHeaders(),
@@ -241,6 +251,11 @@ function getHost(url) {
 
 function isIaccHost(host) {
   return host === "iacc.qq.com" || host === "iacc.rec.qq.com";
+}
+
+function isStartupAssetUrl(host, url) {
+  if (host !== "vfiles.gtimg.cn") return false;
+  return /\/(?:wuji_dashboard\/xy\/starter|wupload\/xy\/(?:starter|promotionTest)|wupload\/ad_control_config_test)\//i.test(url);
 }
 
 function finishRequestWithResponse(response) {
