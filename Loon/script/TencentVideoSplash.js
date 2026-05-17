@@ -273,6 +273,14 @@ function handleRequest(url, host, aggressive) {
     });
   }
 
+  if (isSplashVideoAssetUrl(host, url)) {
+    return finishRequestWithResponse({
+      status: 204,
+      headers: emptyHeaders(),
+      body: "",
+    });
+  }
+
   if (host === "rdelivery.qq.com") {
     const text = typeof body === "string" ? body : body ? asciiPreview(body) : "";
     if (aggressive || /splash|app_cold_launch|adsplash|ad_/i.test(text)) {
@@ -369,6 +377,11 @@ function isStartupPackageUrl(host, url) {
     return false;
   }
   return /\/wuji_dashboard\/xy\/(?:starter|blocked)\/[^/?#]+\.zip(?:[?#]|$)/i.test(url);
+}
+
+function isSplashVideoAssetUrl(host, url) {
+  if (host !== "ugchsy.gtimg.com") return false;
+  return /\/gzc_1000127_[^/?#]+\.f10201\.mp4(?:[?#]|$)/i.test(url);
 }
 
 function startupPackageBody(url) {
