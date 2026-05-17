@@ -1,5 +1,5 @@
 #!name=Tencent Video AdBlock Script
-#!desc=Tencent Video splash/feed ad cleaner for Loon. Keeps normal home data intact while poisoning explicit ad service calls.
+#!desc=Tencent Video splash ad cleaner for Loon. Keeps normal home/playback data intact while poisoning explicit splash ad calls.
 #!author=Codex
 #!date=2026-05-17
 
@@ -39,13 +39,9 @@ DOMAIN-KEYWORD,trace.video.qq.com,REJECT
 IP-CIDR,47.110.187.87/32,REJECT,no-resolve
 
 [Rewrite]
-^https?:\/\/[\d\.:]*\/?(defaultts\.tc|vmind\.qqvideo\.tc|finderpdd\.video)\.qq\.com\/\w+ reject
-^https?:\/\/apd-vlive\.apdcdn\.tc\.qq\.com\/vmind\.qqvideo\.tc\.qq\.com\/\w+ reject
-^https?:\/\/apd-\w+\.v\.smtcdns\.com\/(defaultts|omts|vmind\.qqvideo)\.tc\.qq\.com\/\w+ reject
 ^https?:\/\/film\.video\.qq\.com\/(?:x|h5|magic-act|weixin)\/ reject
 ^https?:\/\/content\.rconfig\.qq\.com\/log_config\/ reject
 ^https?:\/\/tips\.video\.qq\.com\/device\/registerDevice reject
-^https?:\/\/vv\.video\.qq\.com\/(diff|get)vmind reject-dict
 ^https?:\/\/vv\.video\.qq\.com\/getvinfo response-body-replace-regex &sppreviewtype=\d(.*)&spsrt=\d &sppreviewtype=0$1&spsrt=0
 
 [Script]
