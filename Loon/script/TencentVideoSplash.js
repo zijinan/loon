@@ -300,7 +300,7 @@ function handleRequest(url, host, aggressive) {
   const isBinary = typeof body !== "string";
   const text = isBinary ? asciiPreview(body) : body;
 
-  if (!isExplicitAdRequest(text)) {
+  if (!isExplicitAdRequest(text) && !isPageFeedRequest(text)) {
     return $done({});
   }
 
@@ -398,6 +398,11 @@ function getRequestText() {
 
 function isExplicitAdRequest(text) {
   return /reward_ad_ssp|reward_no_ssp|GetFollowHeartReward(?:Ad|No)Info|reward_(?:free|void)_mode|video_(?:ad|no)_ssp_feeds|Server(?:Ad|No)FeedsVideo|GetPersonalCenter(?:Ad|No)Data|vip_(?:ad|no)_promotion|AccessPromotion|IgnorePromotion|GetFloatActivity|NilFloatActivity|trpc\.promotion\.(?:adapter|invalid)|(?:ad|no)Service/i.test(text);
+}
+
+function isPageFeedRequest(text) {
+  return /trpc\.multi_vector_layout\.mvl_controller\.MVL(?:Page|SecondPage|Personal)Service\/getMVLPage/i.test(text)
+    && /AdRequestContextInfo|ad_screen|ad_type|ad_device_platform/i.test(text);
 }
 
 function isHardAdResponse(host, text, isExplicitAd) {
