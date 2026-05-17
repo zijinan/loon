@@ -25,7 +25,6 @@ DOMAIN,info6.video.qq.com,REJECT
 DOMAIN,ios.video.mpush.qq.com,REJECT
 DOMAIN,otheve.beacon.qq.com,REJECT
 DOMAIN,tpns.qq.com,REJECT
-DOMAIN,vv6.video.qq.com,REJECT
 DOMAIN,snowflake.qq.com,REJECT
 DOMAIN,galileotelemetry.tencent.com,REJECT
 DOMAIN,szmg.qq.com,REJECT
