@@ -1,5 +1,5 @@
 #!name=Tencent Video AdBlock Script
-#!desc=Tencent Video splash/page ad cleaner for Loon. Keeps normal playback CDN and playback config intact.
+#!desc=Tencent Video splash/page/playback ad cleaner for Loon. Restores playback ad rewrites while keeping normal page data intact.
 #!author=Codex
 #!date=2026-05-17
 
@@ -39,9 +39,14 @@ DOMAIN-KEYWORD,trace.video.qq.com,REJECT
 IP-CIDR,47.110.187.87/32,REJECT,no-resolve
 
 [Rewrite]
+^https?:\/\/[\d\.:]*\/?(defaultts\.tc|vmind\.qqvideo\.tc|finderpdd\.video)\.qq\.com\/\w+ reject
+^https?:\/\/apd-vlive\.apdcdn\.tc\.qq\.com\/vmind\.qqvideo\.tc\.qq\.com\/\w+ reject
+^https?:\/\/apd-\w+\.v\.smtcdns\.com\/(defaultts|omts|vmind\.qqvideo)\.tc\.qq\.com\/\w+ reject
 ^https?:\/\/film\.video\.qq\.com\/(?:x|h5|magic-act|weixin)\/ reject
 ^https?:\/\/content\.rconfig\.qq\.com\/log_config\/ reject
 ^https?:\/\/tips\.video\.qq\.com\/device\/registerDevice reject
+^https?:\/\/vv\.video\.qq\.com\/(diff|get)vmind reject-dict
+^https?:\/\/vv\.video\.qq\.com\/getvinfo response-body-replace-regex &sppreviewtype=\d(.*)&spsrt=\d &sppreviewtype=0$1&spsrt=0
 
 [Script]
 http-request ^https?:\/\/i\.video\.qq\.com\/$ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-i.video-request-cleaner,enable=true
