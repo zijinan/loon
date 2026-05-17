@@ -57,6 +57,15 @@ const STARTUP_PACKAGE_ZIPS = {
 
     const isBinary = typeof body !== "string";
     const text = isBinary ? asciiPreview(body) : body;
+
+    if (host === "ilive.qq.com" && /\/cgi-bin\/general\/platform_config\/pull_config/i.test(url) && /preload_switch_ios/i.test(text)) {
+      return finishResponse({
+        status: $response.status,
+        headers: passHeaders($response.headers),
+        body: disablePreloadSwitch(text),
+      });
+    }
+
     if (isHardAdResponse(host, text)) {
       return finishResponse({
         status: 204,
@@ -68,9 +77,16 @@ const STARTUP_PACKAGE_ZIPS = {
     const markers = [
       "AdFeedInfo",
       "AdFeedImagePoster",
+      "AdFeedVideoPoster",
       "view_ad_ssp",
+      "video_ad_ssp_feeds",
+      "ServerAdFeedsVideo",
+      "video/splash",
       "pgdt.gtimg.cn",
       "gdt.qq.com",
+      "gdt_stats.fcg",
+      "gdt_click.fcg",
+      "gdt_report.fcg",
       "l.qq.com",
       "adsplash",
       "ad_block_2",
@@ -107,6 +123,7 @@ const STARTUP_PACKAGE_ZIPS = {
       changed += replaceAscii(bytes, "gdt.qq.com", "nil.qq.com");
       changed += replaceAscii(bytes, "l.qq.com", "0.qq.com");
       changed += replaceAscii(bytes, "AdFeedImagePoster", "NoFeedImagePoster");
+      changed += replaceAscii(bytes, "AdFeedVideoPoster", "NoFeedVideoPoster");
       changed += replaceAscii(bytes, "AdFeedInfo", "NoFeedInfo");
       changed += replaceAscii(bytes, "view_ad_ssp", "void_ad_ssp");
       changed += replaceAscii(bytes, "adsplash", "nosplash");
@@ -163,6 +180,7 @@ const STARTUP_PACKAGE_ZIPS = {
     next = sameLengthReplace(next, "gdt.qq.com", "nil.qq.com");
     next = sameLengthReplace(next, "l.qq.com", "0.qq.com");
     next = sameLengthReplace(next, "AdFeedImagePoster", "NoFeedImagePoster");
+    next = sameLengthReplace(next, "AdFeedVideoPoster", "NoFeedVideoPoster");
     next = sameLengthReplace(next, "AdFeedInfo", "NoFeedInfo");
     next = sameLengthReplace(next, "view_ad_ssp", "void_ad_ssp");
     next = sameLengthReplace(next, "adsplash", "nosplash");
@@ -284,6 +302,8 @@ function handleRequest(url, host, aggressive) {
     "AdRequestContextInfo",
     "view_ad_ssp",
     "reward_ad_ssp",
+    "video_ad_ssp_feeds",
+    "ServerAdFeedsVideo",
     "adService",
     "AccessPromotion",
     "ad_screen",
@@ -301,6 +321,8 @@ function handleRequest(url, host, aggressive) {
     changed += replaceAscii(bytes, "AdRequestContextInfo", "NoRequestContextInfo");
     changed += replaceAscii(bytes, "view_ad_ssp", "void_ad_ssp");
     changed += replaceAscii(bytes, "reward_ad_ssp", "reward_no_ssp");
+    changed += replaceAscii(bytes, "video_ad_ssp_feeds", "video_no_ssp_feeds");
+    changed += replaceAscii(bytes, "ServerAdFeedsVideo", "ServerNoFeedsVideo");
     changed += replaceAscii(bytes, "adService", "noService");
     changed += replaceAscii(bytes, "AccessPromotion", "IgnorePromotion");
     changed += replaceAscii(bytes, "ad_screen", "no_screen");
@@ -318,6 +340,8 @@ function handleRequest(url, host, aggressive) {
   next = sameLengthReplace(next, "AdRequestContextInfo", "NoRequestContextInfo");
   next = sameLengthReplace(next, "view_ad_ssp", "void_ad_ssp");
   next = sameLengthReplace(next, "reward_ad_ssp", "reward_no_ssp");
+  next = sameLengthReplace(next, "video_ad_ssp_feeds", "video_no_ssp_feeds");
+  next = sameLengthReplace(next, "ServerAdFeedsVideo", "ServerNoFeedsVideo");
   next = sameLengthReplace(next, "adService", "noService");
   next = sameLengthReplace(next, "AccessPromotion", "IgnorePromotion");
   next = sameLengthReplace(next, "ad_screen", "no_screen");
@@ -361,13 +385,31 @@ function startupPackageBody(url) {
 }
 
 function isHardAdRequest(text) {
-  return /reward_ad_ssp|GetFollowHeartRewardAdInfo|reward_free_mode|vip_ad_promotion|AccessPromotion|GetFloatActivity|trpc\.promotion\.adapter|adService/i.test(text)
+  return /reward_ad_ssp|video_ad_ssp_feeds|ServerAdFeedsVideo|GetFollowHeartRewardAdInfo|reward_free_mode|vip_ad_promotion|AccessPromotion|GetFloatActivity|trpc\.promotion\.adapter|adService/i.test(text)
     || (/AdRequestContextInfo/.test(text) && /app_launch_idx|view_ad_ssp|ad_screen|ad_type|ad_device_platform/i.test(text));
 }
 
 function isHardAdResponse(host, text) {
   if (host !== "i.video.qq.com") return false;
-  return /view_ad_ssp|AdFeedInfo|AdFeedImagePoster|adsplash|vip_ad_promotion|ad\.vipinfo|ad\.userinfo|yuanbao\.tencent\.com|GetFloatActivity/i.test(text);
+  return /view_ad_ssp|video_ad_ssp_feeds|ServerAdFeedsVideo|AdFeedInfo|AdFeedImagePoster|AdFeedVideoPoster|video\/splash|pgdt\.gtimg\.cn|gdt_(?:stats|click|report)\.fcg|nc\.gdt\.qq\.com|vr\.gdt\.qq\.com|c3\.gdt\.qq\.com|v3\.gdt\.qq\.com|adsplash|vip_ad_promotion|ad\.vipinfo|ad\.userinfo|yuanbao\.tencent\.com|GetFloatActivity/i.test(text);
+}
+
+function disablePreloadSwitch(text) {
+  try {
+    const data = JSON.parse(text);
+    const items = data && data.datas && Array.isArray(data.datas.items) ? data.datas.items : [];
+    items.forEach((item) => {
+      if (item && item.key === "preload_switch_ios") {
+        item.value = "0";
+        item.version = "";
+        item.version_id = "0";
+        item.version_name = "";
+      }
+    });
+    return JSON.stringify(data);
+  } catch (_) {
+    return String(text).replace(/("key"\s*:\s*"preload_switch_ios"[\s\S]{0,240}?"value"\s*:\s*)"[^"]*"/g, '$1"0"');
+  }
 }
 
 function finishRequestWithResponse(response) {
