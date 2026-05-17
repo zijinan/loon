@@ -8,6 +8,22 @@
  * markers/domains found in the capture, preserving binary offsets and sizes.
  */
 
+const STARTUP_PACKAGE_ZIPS = {
+  "916b4000": "UEsDBBQAAAAAAAAAIVg9s7p0bAAAAGwAAAAJAAAAaG9tZS5qc29ueyJ2IjoiNS43LjUiLCJmciI6NjAsImlwIjowLCJvcCI6MSwidyI6MTMyLCJoIjoxMzIsIm5tIjoiaG9tZSIsImRkZCI6MCwiYXNzZXRzIjpbXSwibGF5ZXJzIjpbXSwibWFya2VycyI6W119UEsBAhQAFAAAAAAAAAAhWD2zunRsAAAAbAAAAAkAAAAAAAAAAAAAAAAAAAAAAGhvbWUuanNvblBLBQYAAAAAAQABADcAAACTAAAAAAA=",
+  "cd5bd9cc": "UEsDBBQAAAAAAAAAIVjnx8yAcAAAAHAAAAANAAAAaG9tZURhcmsuanNvbnsidiI6IjUuNy41IiwiZnIiOjYwLCJpcCI6MCwib3AiOjEsInciOjEzMiwiaCI6MTMyLCJubSI6ImhvbWVEYXJrIiwiZGRkIjowLCJhc3NldHMiOltdLCJsYXllcnMiOltdLCJtYXJrZXJzIjpbXX1QSwECFAAUAAAAAAAAACFY58fMgHAAAABwAAAADQAAAAAAAAAAAAAAAAAAAAAAaG9tZURhcmsuanNvblBLBQYAAAAAAQABADsAAACbAAAAAAA=",
+  "28261b7e": "UEsDBBQAAAAAAAAAIVhrvDzmbgAAAG4AAAALAAAAQXBwZWFyLmpzb257InYiOiI1LjcuNSIsImZyIjo2MCwiaXAiOjAsIm9wIjoxLCJ3IjoxMzIsImgiOjEzMiwibm0iOiJBcHBlYXIiLCJkZGQiOjAsImFzc2V0cyI6W10sImxheWVycyI6W10sIm1hcmtlcnMiOltdfVBLAQIUABQAAAAAAAAAIVhrvDzmbgAAAG4AAAALAAAAAAAAAAAAAAAAAAAAAABBcHBlYXIuanNvblBLBQYAAAAAAQABADkAAACXAAAAAAA=",
+  "4a9e6fa5": "UEsDBBQAAAAAAAAAIVjCAPjDcQAAAHEAAAAOAAAARGlzYXBwZWFyLmpzb257InYiOiI1LjcuNSIsImZyIjo2MCwiaXAiOjAsIm9wIjoxLCJ3IjoxMzIsImgiOjEzMiwibm0iOiJEaXNhcHBlYXIiLCJkZGQiOjAsImFzc2V0cyI6W10sImxheWVycyI6W10sIm1hcmtlcnMiOltdfVBLAQIUABQAAAAAAAAAIVjCAPjDcQAAAHEAAAAOAAAAAAAAAAAAAAAAAAAAAABEaXNhcHBlYXIuanNvblBLBQYAAAAAAQABADwAAACdAAAAAAA=",
+  "76bb0627": "UEsDBBQAAAAAAAAAIVgBHS4WcgAAAHIAAAAPAAAAQXBwZWFyRGFyay5qc29ueyJ2IjoiNS43LjUiLCJmciI6NjAsImlwIjowLCJvcCI6MSwidyI6MTMyLCJoIjoxMzIsIm5tIjoiQXBwZWFyRGFyayIsImRkZCI6MCwiYXNzZXRzIjpbXSwibGF5ZXJzIjpbXSwibWFya2VycyI6W119UEsBAhQAFAAAAAAAAAAhWAEdLhZyAAAAcgAAAA8AAAAAAAAAAAAAAAAAAAAAAEFwcGVhckRhcmsuanNvblBLBQYAAAAAAQABAD0AAACfAAAAAAA=",
+  "cb6a29c3": "UEsDBBQAAAAAAAAAIVj3ipsOdQAAAHUAAAASAAAARGlzYXBwZWFyRGFyay5qc29ueyJ2IjoiNS43LjUiLCJmciI6NjAsImlwIjowLCJvcCI6MSwidyI6MTMyLCJoIjoxMzIsIm5tIjoiRGlzYXBwZWFyRGFyayIsImRkZCI6MCwiYXNzZXRzIjpbXSwibGF5ZXJzIjpbXSwibWFya2VycyI6W119UEsBAhQAFAAAAAAAAAAhWPeKmw51AAAAdQAAABIAAAAAAAAAAAAAAAAAAAAAAERpc2FwcGVhckRhcmsuanNvblBLBQYAAAAAAQABAEAAAAClAAAAAAA=",
+  "d4d87610": "UEsDBBQAAAAAAAAAIVjXo53XbQAAAG0AAAAKAAAAc2hvcnQuanNvbnsidiI6IjUuNy41IiwiZnIiOjYwLCJpcCI6MCwib3AiOjEsInciOjEzMiwiaCI6MTMyLCJubSI6InNob3J0IiwiZGRkIjowLCJhc3NldHMiOltdLCJsYXllcnMiOltdLCJtYXJrZXJzIjpbXX1QSwECFAAUAAAAAAAAACFY16Od120AAABtAAAACgAAAAAAAAAAAAAAAAAAAAAAc2hvcnQuanNvblBLBQYAAAAAAQABADgAAACVAAAAAAA=",
+  "51438c43": "UEsDBBQAAAAAAAAAIVj8hTKwcQAAAHEAAAAOAAAAc2hvcnREYXJrLmpzb257InYiOiI1LjcuNSIsImZyIjo2MCwiaXAiOjAsIm9wIjoxLCJ3IjoxMzIsImgiOjEzMiwibm0iOiJzaG9ydERhcmsiLCJkZGQiOjAsImFzc2V0cyI6W10sImxheWVycyI6W10sIm1hcmtlcnMiOltdfVBLAQIUABQAAAAAAAAAIVj8hTKwcQAAAHEAAAAOAAAAAAAAAAAAAAAAAAAAAABzaG9ydERhcmsuanNvblBLBQYAAAAAAQABADwAAACdAAAAAAA=",
+  "285a9c62": "UEsDBBQAAAAAAAAAIVhzWcgodwAAAHcAAAAUAAAAcmVjb21tZW5kX2xpZ2h0Lmpzb257InYiOiI1LjcuNSIsImZyIjo2MCwiaXAiOjAsIm9wIjoxLCJ3IjoxMzIsImgiOjEzMiwibm0iOiJyZWNvbW1lbmRfbGlnaHQiLCJkZGQiOjAsImFzc2V0cyI6W10sImxheWVycyI6W10sIm1hcmtlcnMiOltdfVBLAQIUABQAAAAAAAAAIVhzWcgodwAAAHcAAAAUAAAAAAAAAAAAAAAAAAAAAAByZWNvbW1lbmRfbGlnaHQuanNvblBLBQYAAAAAAQABAEIAAACpAAAAAAA=",
+  "fd3fb8d1": "UEsDBBQAAAAAAAAAIVgEgNl3dgAAAHYAAAATAAAAcmVjb21tZW5kX2RhcmsuanNvbnsidiI6IjUuNy41IiwiZnIiOjYwLCJpcCI6MCwib3AiOjEsInciOjEzMiwiaCI6MTMyLCJubSI6InJlY29tbWVuZF9kYXJrIiwiZGRkIjowLCJhc3NldHMiOltdLCJsYXllcnMiOltdLCJtYXJrZXJzIjpbXX1QSwECFAAUAAAAAAAAACFYBIDZd3YAAAB2AAAAEwAAAAAAAAAAAAAAAAAAAAAAcmVjb21tZW5kX2RhcmsuanNvblBLBQYAAAAAAQABAEEAAACnAAAAAAA=",
+  "414088c0": "UEsDBBQAAAAAAAAAIVj8HGkRagAAAGoAAAAHAAAAbWUuanNvbnsidiI6IjUuNy41IiwiZnIiOjYwLCJpcCI6MCwib3AiOjEsInciOjEzMiwiaCI6MTMyLCJubSI6Im1lIiwiZGRkIjowLCJhc3NldHMiOltdLCJsYXllcnMiOltdLCJtYXJrZXJzIjpbXX1QSwECFAAUAAAAAAAAACFY/BxpEWoAAABqAAAABwAAAAAAAAAAAAAAAAAAAAAAbWUuanNvblBLBQYAAAAAAQABADUAAACPAAAAAAA=",
+  "ef06d34b": "UEsDBBQAAAAAAAAAIVjSV9QLbgAAAG4AAAALAAAAbWVEYXJrLmpzb257InYiOiI1LjcuNSIsImZyIjo2MCwiaXAiOjAsIm9wIjoxLCJ3IjoxMzIsImgiOjEzMiwibm0iOiJtZURhcmsiLCJkZGQiOjAsImFzc2V0cyI6W10sImxheWVycyI6W10sIm1hcmtlcnMiOltdfVBLAQIUABQAAAAAAAAAIVjSV9QLbgAAAG4AAAALAAAAAAAAAAAAAAAAAAAAAABtZURhcmsuanNvblBLBQYAAAAAAQABADkAAACXAAAAAAA=",
+  default: "UEsDBBQAAAAAAAAAIVgw4GTcbQAAAG0AAAAKAAAAYmxhbmsuanNvbnsidiI6IjUuNy41IiwiZnIiOjYwLCJpcCI6MCwib3AiOjEsInciOjEzMiwiaCI6MTMyLCJubSI6ImJsYW5rIiwiZGRkIjowLCJhc3NldHMiOltdLCJsYXllcnMiOltdLCJtYXJrZXJzIjpbXX1QSwECFAAUAAAAAAAAACFYMOBk3G0AAABtAAAACgAAAAAAAAAAAAAAAAAAAAAAYmxhbmsuanNvblBLBQYAAAAAAQABADgAAACVAAAAAAA=",
+};
+
 (() => {
   const url = ($request && $request.url) || "";
   const host = getHost(url);
@@ -40,6 +56,15 @@
     if (!body) return $done({});
 
     const isBinary = typeof body !== "string";
+    const text = isBinary ? asciiPreview(body) : body;
+    if (isHardAdResponse(host, text)) {
+      return finishResponse({
+        status: 204,
+        headers: emptyHeaders(),
+        body: "",
+      });
+    }
+
     const markers = [
       "AdFeedInfo",
       "AdFeedImagePoster",
@@ -67,7 +92,6 @@
       "ad_device_platform",
     ];
 
-    const text = isBinary ? asciiPreview(body) : body;
     if (!markers.some((marker) => text.includes(marker))) {
       return $done({});
     }
@@ -192,14 +216,16 @@
   }
 })();
 
+
 function handleRequest(url, host, aggressive) {
   const body = $request && $request.body;
 
   if (isStartupPackageUrl(host, url)) {
+    const packageBody = startupPackageBody(url);
     return finishRequestWithResponse({
       status: 200,
-      headers: zipHeaders(),
-      body: emptyZipBody(),
+      headers: zipHeaders(packageBody.length),
+      body: packageBody,
     });
   }
 
@@ -245,6 +271,15 @@ function handleRequest(url, host, aggressive) {
 
   const isBinary = typeof body !== "string";
   const text = isBinary ? asciiPreview(body) : body;
+
+  if (isHardAdRequest(text)) {
+    return finishRequestWithResponse({
+      status: 204,
+      headers: emptyHeaders(),
+      body: "",
+    });
+  }
+
   const markers = [
     "AdRequestContextInfo",
     "view_ad_ssp",
@@ -258,14 +293,6 @@ function handleRequest(url, host, aggressive) {
 
   if (!markers.some((marker) => text.includes(marker))) {
     return $done({});
-  }
-
-  if (/reward_ad_ssp|GetFollowHeartRewardAdInfo|reward_free_mode/.test(text)) {
-    return finishRequestWithResponse({
-      status: 204,
-      headers: emptyHeaders(),
-      body: "",
-    });
   }
 
   if (isBinary) {
@@ -327,6 +354,22 @@ function isStartupPackageUrl(host, url) {
   return /\/wuji_dashboard\/xy\/(?:starter|blocked)\/[^/?#]+\.zip(?:[?#]|$)/i.test(url);
 }
 
+function startupPackageBody(url) {
+  const match = String(url).match(/\/([0-9a-f]{8})\.zip(?:[?#]|$)/i);
+  const key = match ? match[1].toLowerCase() : "default";
+  return base64ToBinary(STARTUP_PACKAGE_ZIPS[key] || STARTUP_PACKAGE_ZIPS.default);
+}
+
+function isHardAdRequest(text) {
+  return /reward_ad_ssp|GetFollowHeartRewardAdInfo|reward_free_mode|vip_ad_promotion|AccessPromotion|GetFloatActivity|trpc\.promotion\.adapter|adService/i.test(text)
+    || (/AdRequestContextInfo/.test(text) && /app_launch_idx|view_ad_ssp|ad_screen|ad_type|ad_device_platform/i.test(text));
+}
+
+function isHardAdResponse(host, text) {
+  if (host !== "i.video.qq.com") return false;
+  return /view_ad_ssp|AdFeedInfo|AdFeedImagePoster|adsplash|vip_ad_promotion|ad\.vipinfo|ad\.userinfo|yuanbao\.tencent\.com|GetFloatActivity/i.test(text);
+}
+
 function finishRequestWithResponse(response) {
   return $done({ response });
 }
@@ -356,13 +399,13 @@ function gifHeaders() {
   };
 }
 
-function zipHeaders() {
+function zipHeaders(length) {
   return {
     "Accept-Ranges": "bytes",
     "Cache-Control": "public, max-age=31536000",
-    "Content-Length": "22",
+    "Content-Length": String(length),
     "Content-Type": "application/zip",
-    "ETag": '"tencent-video-empty-startup-package"',
+    "ETag": '"tencent-video-blank-startup-package"',
     "Last-Modified": "Mon, 01 Jan 2024 00:00:00 GMT",
   };
 }
@@ -371,8 +414,28 @@ function transparentGifBody() {
   return "GIF89a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\x00\x00\x00!\xF9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;";
 }
 
-function emptyZipBody() {
-  return "PK\x05\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+function base64ToBinary(input) {
+  if (typeof atob === "function") return atob(input);
+
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  let buffer = 0;
+  let bits = 0;
+  let out = "";
+
+  for (let i = 0; i < input.length; i++) {
+    const ch = input.charAt(i);
+    if (ch === "=") break;
+    const value = chars.indexOf(ch);
+    if (value < 0) continue;
+    buffer = (buffer << 6) | value;
+    bits += 6;
+    if (bits >= 8) {
+      bits -= 8;
+      out += String.fromCharCode((buffer >> bits) & 0xff);
+    }
+  }
+
+  return out;
 }
 
 function passHeaders(headers) {
