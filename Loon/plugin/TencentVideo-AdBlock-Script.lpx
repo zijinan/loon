@@ -18,6 +18,7 @@ DOMAIN,c3.gdt.qq.com,REJECT
 DOMAIN-SUFFIX,l.qq.com,REJECT
 DOMAIN-SUFFIX,reachmax.cn,REJECT
 DOMAIN-SUFFIX,smvy.cn,REJECT
+DOMAIN,mim-x.jd.com,REJECT
 DOMAIN,c3.ni0.qq.com,REJECT
 DOMAIN,info4.video.qq.com,REJECT
 DOMAIN,info6.video.qq.com,REJECT
@@ -48,16 +49,16 @@ IP-CIDR,47.110.187.87/32,REJECT,no-resolve
 ^https?:\/\/vv\.video\.qq\.com\/getvinfo response-body-replace-regex &sppreviewtype=\d(.*)&spsrt=\d &sppreviewtype=0$1&spsrt=0
 
 [Script]
-http-request ^https?:\/\/i\.video\.qq\.com\/$ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong2,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-i.video-request-cleaner,enable=true
-http-response ^https?:\/\/i\.video\.qq\.com\/$ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong2,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-i.video-response-cleaner,enable=true
-http-request ^https?:\/\/iacc(?:\.rec)?\.qq\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong2,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-iacc-request-block,enable=true
-http-response ^https?:\/\/iacc(?:\.rec)?\.qq\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong2,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-iacc-response-block,enable=true
-http-request ^https?:\/\/tv2\.reachmax\.cn\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong2,timeout=10,tag=TencentVideo-reachmax-block,enable=true
-http-request ^https?:\/\/(?:vfiles\.gtimg\.cn|wfiles\.gtimg\.cn|vip\.image\.video\.qpic\.cn|invalid\.localxx)\/(?:wuji_dashboard\/xy\/(?:starter|blocked)|wupload\/xy\/(?:starter|blocked|promotionTest|promotionNone|universal)|wupload\/ad_control_config_test|wupload\/vip\.vip_area_level_opration(?:_test)?)(?:\/|$) script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong2,timeout=10,tag=TencentVideo-startup-asset-blank,enable=true
-http-request ^https?:\/\/rdelivery\.qq\.com\/(?:v1\/statistic\/report|v3\/config\/pull) script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong2,requires-body=true,binary-body-mode=false,argument="aggressive=1",timeout=10,tag=TencentVideo-rdelivery-request-cleaner,enable=true
-http-response ^https?:\/\/rdelivery\.qq\.com\/v3\/config\/pull script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong2,requires-body=true,binary-body-mode=false,argument="aggressive=1",timeout=10,tag=TencentVideo-rdelivery-response-cleaner,enable=true
-http-response ^https?:\/\/config\.ab\.qq\.com\/tab\/GetTabRemoteConfig script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong2,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-abconfig-sampling-cleaner,enable=true
-http-response ^https?:\/\/ilive\.qq\.com\/cgi-bin\/general\/platform_config\/pull_config script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong2,requires-body=true,binary-body-mode=false,timeout=10,tag=TencentVideo-ilive-preload-off,enable=true
+http-request ^https?:\/\/i\.video\.qq\.com\/$ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong3,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-i.video-request-cleaner,enable=true
+http-response ^https?:\/\/i\.video\.qq\.com\/$ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong3,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-i.video-response-cleaner,enable=true
+http-request ^https?:\/\/iacc(?:\.rec)?\.qq\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong3,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-iacc-request-block,enable=true
+http-response ^https?:\/\/iacc(?:\.rec)?\.qq\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong3,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-iacc-response-block,enable=true
+http-request ^https?:\/\/tv2\.reachmax\.cn\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong3,timeout=10,tag=TencentVideo-reachmax-block,enable=true
+http-request ^https?:\/\/(?:vfiles\.gtimg\.cn|wfiles\.gtimg\.cn|vip\.image\.video\.qpic\.cn|invalid\.localxx)\/(?:wuji_dashboard\/xy\/(?:starter|blocked)|wupload\/xy\/(?:starter|blocked|promotionTest|promotionNone|universal)|wupload\/ad_control_config_test|wupload\/vip\.vip_area_level_opration(?:_test)?)(?:\/|$) script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong3,timeout=10,tag=TencentVideo-startup-asset-blank,enable=true
+http-request ^https?:\/\/rdelivery\.qq\.com\/(?:v1\/statistic\/report|v3\/config\/pull) script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong3,requires-body=true,binary-body-mode=false,argument="aggressive=1",timeout=10,tag=TencentVideo-rdelivery-request-cleaner,enable=true
+http-response ^https?:\/\/rdelivery\.qq\.com\/v3\/config\/pull script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong3,requires-body=true,binary-body-mode=false,argument="aggressive=1",timeout=10,tag=TencentVideo-rdelivery-response-cleaner,enable=true
+http-response ^https?:\/\/config\.ab\.qq\.com\/tab\/GetTabRemoteConfig script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong3,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-abconfig-sampling-cleaner,enable=true
+http-response ^https?:\/\/ilive\.qq\.com\/cgi-bin\/general\/platform_config\/pull_config script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js?v=20260517-strong3,requires-body=true,binary-body-mode=false,timeout=10,tag=TencentVideo-ilive-preload-off,enable=true
 
 [MITM]
 hostname = vv.video.qq.com, i.video.qq.com, iacc.qq.com, iacc.rec.qq.com, rdelivery.qq.com, tv2.reachmax.cn, vfiles.gtimg.cn, wfiles.gtimg.cn, vip.image.video.qpic.cn, invalid.localxx, film.video.qq.com, content.rconfig.qq.com, tips.video.qq.com, config.ab.qq.com, ilive.qq.com

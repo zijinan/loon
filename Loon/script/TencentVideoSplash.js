@@ -385,7 +385,7 @@ function startupPackageBody(url) {
 }
 
 function isHardAdRequest(text) {
-  return /reward_ad_ssp|video_ad_ssp_feeds|ServerAdFeedsVideo|GetFollowHeartRewardAdInfo|reward_free_mode|vip_ad_promotion|AccessPromotion|GetFloatActivity|trpc\.promotion\.adapter|adService/i.test(text)
+  return /reward_ad_ssp|GetFollowHeartRewardAdInfo|reward_free_mode|vip_ad_promotion|AccessPromotion|GetFloatActivity|trpc\.promotion\.adapter|adService/i.test(text)
     || (/AdRequestContextInfo/.test(text) && /app_launch_idx|view_ad_ssp|ad_screen|ad_type|ad_device_platform/i.test(text));
 }
 
