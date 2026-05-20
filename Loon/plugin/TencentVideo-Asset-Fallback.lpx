@@ -1,0 +1,10 @@
+#!name=Tencent Video Asset Fallback
+#!desc=Optional Tencent Video startup asset fallback. Enable only when startup/local fallback ads return; it MITMs image/resource CDNs and can increase Loon cache.
+#!author=Codex
+#!date=2026-05-20
+
+[Script]
+http-request ^https?:\/\/(?:vfiles\.gtimg\.cn|wfiles\.gtimg\.cn|vip\.image\.video\.qpic\.cn|invalid\.localxx)\/(?:wuji_dashboard\/xy\/(?:starter|blocked)|wupload\/xy\/(?:starter|blocked|promotionTest|promotionNone|universal)|wupload\/ad_control_config_test|wupload\/vip\.vip_area_level_opration(?:_test)?)(?:\/|$) script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,timeout=10,tag=TencentVideo-startup-asset-fallback,enable=true
+
+[MITM]
+hostname = vfiles.gtimg.cn, wfiles.gtimg.cn, vip.image.video.qpic.cn, invalid.localxx
