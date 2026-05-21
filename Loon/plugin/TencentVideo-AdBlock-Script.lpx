@@ -1,10 +1,11 @@
-#!name=腾讯视频去广告-开屏强拦 v4
-#!desc=专门针对本次抓包里的开屏/启动页广告：i.video 页面配置、starter/promotionTest 资源、iacc/rdelivery。仍不拦视频播放 CDN，避免缓存暴涨。
+#!name=腾讯视频去广告-开屏强拦 v5
+#!desc=针对本次抓包：开屏广告实际跳到 Tanx/Taobao 活动页，强拦 click.tanx.com、huodong.taobao.com、h5api.m.taobao.com 及其 alicdn/mmstat 资源；不拦腾讯视频播放 CDN。
 #!author=zijinan + ChatGPT
 #!date=2026-05-22
 #!homepage=https://github.com/zijinan/loon
 
 [Rule]
+# 腾讯广告 / 上报
 DOMAIN-SUFFIX,gdt.qq.com,REJECT
 DOMAIN-SUFFIX,nil.qq.com,REJECT
 DOMAIN-SUFFIX,l.qq.com,REJECT
@@ -22,13 +23,36 @@ DOMAIN,info4.video.qq.com,REJECT
 DOMAIN,info6.video.qq.com,REJECT
 DOMAIN,ios.video.mpush.qq.com,REJECT
 DOMAIN,tpns.qq.com,REJECT
+
+# 本次抓包真实开屏落地链：Tanx -> Taobao 活动页 -> Alicdn 资源/图片 -> mmstat 上报
+DOMAIN,click.tanx.com,REJECT
+DOMAIN,ef-dongfeng.tanx.com,REJECT
+DOMAIN,huodong.taobao.com,REJECT
+DOMAIN,h5api.m.taobao.com,REJECT
+DOMAIN,g.alicdn.com,REJECT
+DOMAIN,gw.alicdn.com,REJECT
+DOMAIN,img.alicdn.com,REJECT
+DOMAIN,t.alicdn.com,REJECT
+DOMAIN,ugcdn.taobao.com,REJECT
+DOMAIN,wgo.mmstat.com,REJECT
+DOMAIN,log.mmstat.com,REJECT
+DOMAIN,fourier.taobao.com,REJECT
+DOMAIN,polyfill.alicdn.com,REJECT
+
+# 之前抓包出现过的外部 H5 广告链路
 DOMAIN-SUFFIX,jetmobo.com,REJECT
 DOMAIN-SUFFIX,lipanwuxian.com,REJECT
 DOMAIN-SUFFIX,liulianglf.cn,REJECT
-DOMAIN,ef-dongfeng.tanx.com,REJECT
 
 [Rewrite]
-# 本次抓包中开屏/启动页素材路径，精确拦，不扩大到 qpic/gtimg 全域
+# 精确拦截 Taobao/Tanx 开屏落地，不依赖域名规则是否先生效
+^https?:\/\/click\.tanx\.com\/ reject-dict
+^https?:\/\/huodong\.taobao\.com\/wow\/a\/act\/tmall\/ reject-dict
+^https?:\/\/h5api\.m\.taobao\.com\/h5\/mtop\.(?:gaia|tmall|taobao)\. reject-dict
+^https?:\/\/(?:g|gw|img|t)\.alicdn\.com\/ reject
+^https?:\/\/wgo\.mmstat\.com\/ reject-dict
+
+# 腾讯启动页素材路径，精确拦，不扩大到 qpic/gtimg 全域
 ^https?:\/\/(?:vfiles|wfiles|vip\.image\.video)\.(?:gtimg|qpic)\.cn\/(?:wuji_dashboard\/xy\/starter|wupload\/xy\/(?:promotionTest|starter|universal)|wupload\/ad_control_config_test|wupload\/vip\.vip_area_level_opration)\/ reject-img
 ^https?:\/\/config\.ab\.qq\.com\/tab\/GetTabRemoteConfig reject-dict
 ^https?:\/\/tab\.video\.qq\.com\/tab\/GetTabRemoteConfig reject-dict
@@ -37,6 +61,9 @@ DOMAIN,ef-dongfeng.tanx.com,REJECT
 http-request ^https?:\/\/(.*\.)?(jetmobo|lipanwuxian)\.com\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-外部广告空响应, enable=true
 http-request ^https?:\/\/(.*\.)?liulianglf\.cn\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-外部广告空响应CN, enable=true
 http-request ^https?:\/\/ef-dongfeng\.tanx\.com\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-Tanx空响应, enable=true
+http-request ^https?:\/\/click\.tanx\.com\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-clickTanx空响应, enable=true
+http-request ^https?:\/\/huodong\.taobao\.com\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-Taobao落地页空响应, enable=true
+http-request ^https?:\/\/h5api\.m\.taobao\.com\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-Taobao接口空响应, enable=true
 http-request ^https?:\/\/sdkreport\.e\.qq\.com\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-广告上报空响应, enable=true
 http-request ^https?:\/\/(iacc|iacc\.rec)\.qq\.com\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-iacc空响应, enable=true
 http-request ^https?:\/\/rdelivery\.qq\.com\/(?:v1\/statistic\/report|v3\/config\/pull) script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-rdelivery空配置, enable=true
@@ -45,4 +72,4 @@ http-response ^https:\/\/i\.video\.qq\.com\/$ requires-body=true, binary-body-mo
 http-request ^https:\/\/i\.video\.qq\.com\/$ requires-body=true, binary-body-mode=true, script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-iVideo请求广告清理, enable=true
 
 [MITM]
-hostname = i.video.qq.com, iacc.qq.com, iacc.rec.qq.com, rdelivery.qq.com, vfiles.gtimg.cn, wfiles.gtimg.cn, vip.image.video.qpic.cn, config.ab.qq.com, tab.video.qq.com, jetmobo.com, *.jetmobo.com, lipanwuxian.com, *.lipanwuxian.com, liulianglf.cn, *.liulianglf.cn, ef-dongfeng.tanx.com, sdkreport.e.qq.com
+hostname = i.video.qq.com, iacc.qq.com, iacc.rec.qq.com, rdelivery.qq.com, vfiles.gtimg.cn, wfiles.gtimg.cn, vip.image.video.qpic.cn, config.ab.qq.com, tab.video.qq.com, click.tanx.com, huodong.taobao.com, h5api.m.taobao.com, g.alicdn.com, gw.alicdn.com, img.alicdn.com, t.alicdn.com, wgo.mmstat.com, jetmobo.com, *.jetmobo.com, lipanwuxian.com, *.lipanwuxian.com, liulianglf.cn, *.liulianglf.cn, ef-dongfeng.tanx.com, sdkreport.e.qq.com
