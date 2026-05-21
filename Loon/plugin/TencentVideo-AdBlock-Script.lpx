@@ -1,58 +1,39 @@
-#!name=Tencent Video AdBlock Script
-#!desc=Tencent Video splash/page/playback ad cleaner for Loon. Low-cache mode avoids image/video CDN MITM.
-#!author=Codex
-#!date=2026-05-20
+#!name=腾讯视频去广告-脚本轻量版
+#!desc=腾讯视频开屏/页面广告过滤。低缓存模式：只处理 i.video.qq.com 广告字段和外部开屏 H5 链路，不拦视频 CDN，避免 Loon 缓存暴涨。
+#!author=zijinan + ChatGPT
+#!date=2026-05-22
+#!homepage=https://github.com/zijinan/loon
 
 [Rule]
-DOMAIN,ugchsy.gtimg.com,REJECT
-DOMAIN,pgdt.gtimg.cn,REJECT
-DOMAIN,adsmind.gdtimg.com,REJECT
-DOMAIN,qzs.gdtimg.com,REJECT
-DOMAIN,review.gdtimg.com,REJECT
-DOMAIN,pgdt.ugdtimg.com,REJECT
-DOMAIN-SUFFIX,gdtimg.com,REJECT
+# 明确广告域名
 DOMAIN-SUFFIX,gdt.qq.com,REJECT
-DOMAIN,nc.gdt.qq.com,REJECT
-DOMAIN,vr.gdt.qq.com,REJECT
-DOMAIN,v3.gdt.qq.com,REJECT
-DOMAIN,c3.gdt.qq.com,REJECT
-DOMAIN-SUFFIX,l.qq.com,REJECT
-DOMAIN-SUFFIX,reachmax.cn,REJECT
-DOMAIN-SUFFIX,smvy.cn,REJECT
-DOMAIN,mim-x.jd.com,REJECT
-DOMAIN,c3.ni0.qq.com,REJECT
+DOMAIN,adsmind.gdtimg.com,REJECT
+DOMAIN,pgdt.gtimg.cn,REJECT
+DOMAIN,sdkreport.e.qq.com,REJECT
+DOMAIN,otheve.beacon.qq.com,REJECT
+DOMAIN,trace.qq.com,REJECT
+DOMAIN,trace.video.qq.com,REJECT
+DOMAIN,trace.inlong.qq.com,REJECT
 DOMAIN,info4.video.qq.com,REJECT
 DOMAIN,info6.video.qq.com,REJECT
 DOMAIN,ios.video.mpush.qq.com,REJECT
-DOMAIN,otheve.beacon.qq.com,REJECT
 DOMAIN,tpns.qq.com,REJECT
-DOMAIN,snowflake.qq.com,REJECT
-DOMAIN,galileotelemetry.tencent.com,REJECT
-DOMAIN,szmg.qq.com,REJECT
-DOMAIN,yuanbao.tencent.com,REJECT
-DOMAIN-SUFFIX,iwan.qq.com,REJECT
-DOMAIN,film.qq.com,REJECT
-DOMAIN-SUFFIX,manju.v.qq.com,REJECT
-DOMAIN-KEYWORD,adsmind,REJECT
-DOMAIN-KEYWORD,trace.qq.com,REJECT
-DOMAIN-KEYWORD,trace.video.qq.com,REJECT
-IP-CIDR,47.110.187.87/32,REJECT,no-resolve
 
-[Rewrite]
-^https?:\/\/[\d\.:]*\/?(defaultts\.tc|vmind\.qqvideo\.tc|finderpdd\.video)\.qq\.com\/\w+ reject
-^https?:\/\/apd-vlive\.apdcdn\.tc\.qq\.com\/vmind\.qqvideo\.tc\.qq\.com\/\w+ reject
-^https?:\/\/apd-\w+\.v\.smtcdns\.com\/(defaultts|omts|vmind\.qqvideo)\.tc\.qq\.com\/\w+ reject
-^https?:\/\/film\.video\.qq\.com\/(?:x|h5|magic-act|weixin)\/ reject
-^https?:\/\/content\.rconfig\.qq\.com\/log_config\/ reject
-^https?:\/\/tips\.video\.qq\.com\/device\/registerDevice reject
-^https?:\/\/vv\.video\.qq\.com\/(diff|get)vmind reject-dict
-^https?:\/\/vv\.video\.qq\.com\/getvinfo response-body-replace-regex &sppreviewtype=\d(.*)&spsrt=\d &sppreviewtype=0$1&spsrt=0
+# 本次抓包确认的外部开屏广告/H5/落地页链路
+DOMAIN-SUFFIX,jetmobo.com,REJECT
+DOMAIN-SUFFIX,lipanwuxian.com,REJECT
+DOMAIN-SUFFIX,liulianglf.cn,REJECT
+DOMAIN,ef-dongfeng.tanx.com,REJECT
 
 [Script]
-http-request ^https?:\/\/i\.video\.qq\.com\/$ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,requires-body=true,binary-body-mode=true,timeout=10,tag=TencentVideo-i.video-request-cleaner,enable=true
-http-request ^https?:\/\/iacc(?:\.rec)?\.qq\.com\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,timeout=10,tag=TencentVideo-iacc-request-block,enable=true
-http-request ^https?:\/\/tv2\.reachmax\.cn\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,timeout=10,tag=TencentVideo-reachmax-block,enable=true
-http-request ^https?:\/\/rdelivery\.qq\.com\/(?:v1\/statistic\/report|v3\/config\/pull) script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/TencentVideoSplash.js,argument="aggressive=1",timeout=10,tag=TencentVideo-rdelivery-request-cleaner,enable=true
+# 外部广告/H5/埋点：直接返回极小 204，减少 REJECT 后反复重试
+http-request ^https?:\/\/(.*\.)?(jetmobo|lipanwuxian)\.com\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-外部广告空响应, enable=true
+http-request ^https?:\/\/(.*\.)?liulianglf\.cn\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-外部广告空响应CN, enable=true
+http-request ^https?:\/\/ef-dongfeng\.tanx\.com\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-Tanx空响应, enable=true
+http-request ^https?:\/\/sdkreport\.e\.qq\.com\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-广告上报空响应, enable=true
+
+# 腾讯视频 protobuf 广告字段：只对 i.video.qq.com 生效，脚本内只做同长度替换，避免破坏二进制结构
+http-response ^https:\/\/i\.video\.qq\.com\/$ requires-body=true, binary-body-mode=true, script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-iVideo广告字段过滤, enable=true
 
 [MITM]
-hostname = vv.video.qq.com, i.video.qq.com, iacc.qq.com, iacc.rec.qq.com, rdelivery.qq.com, tv2.reachmax.cn, film.video.qq.com, content.rconfig.qq.com, tips.video.qq.com
+hostname = i.video.qq.com, jetmobo.com, *.jetmobo.com, lipanwuxian.com, *.lipanwuxian.com, liulianglf.cn, *.liulianglf.cn, ef-dongfeng.tanx.com, sdkreport.e.qq.com
