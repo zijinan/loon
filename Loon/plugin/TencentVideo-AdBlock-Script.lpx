@@ -1,11 +1,10 @@
-#!name=腾讯视频去广告-脚本增强版 v3
-#!desc=腾讯视频开屏/页面广告过滤。低缓存模式：清理 i.video.qq.com 请求体/响应体，屏蔽 iacc/rdelivery/外部 H5 广告链路，不拦视频 CDN，避免 Loon 缓存暴涨。
+#!name=腾讯视频去广告-开屏强拦 v4
+#!desc=专门针对本次抓包里的开屏/启动页广告：i.video 页面配置、starter/promotionTest 资源、iacc/rdelivery。仍不拦视频播放 CDN，避免缓存暴涨。
 #!author=zijinan + ChatGPT
 #!date=2026-05-22
 #!homepage=https://github.com/zijinan/loon
 
 [Rule]
-# 明确广告域名 / 统计 / 上报
 DOMAIN-SUFFIX,gdt.qq.com,REJECT
 DOMAIN-SUFFIX,nil.qq.com,REJECT
 DOMAIN-SUFFIX,l.qq.com,REJECT
@@ -23,27 +22,27 @@ DOMAIN,info4.video.qq.com,REJECT
 DOMAIN,info6.video.qq.com,REJECT
 DOMAIN,ios.video.mpush.qq.com,REJECT
 DOMAIN,tpns.qq.com,REJECT
-
-# 本次抓包确认的外部开屏广告/H5/落地页链路
 DOMAIN-SUFFIX,jetmobo.com,REJECT
 DOMAIN-SUFFIX,lipanwuxian.com,REJECT
 DOMAIN-SUFFIX,liulianglf.cn,REJECT
 DOMAIN,ef-dongfeng.tanx.com,REJECT
 
+[Rewrite]
+# 本次抓包中开屏/启动页素材路径，精确拦，不扩大到 qpic/gtimg 全域
+^https?:\/\/(?:vfiles|wfiles|vip\.image\.video)\.(?:gtimg|qpic)\.cn\/(?:wuji_dashboard\/xy\/starter|wupload\/xy\/(?:promotionTest|starter|universal)|wupload\/ad_control_config_test|wupload\/vip\.vip_area_level_opration)\/ reject-img
+^https?:\/\/config\.ab\.qq\.com\/tab\/GetTabRemoteConfig reject-dict
+^https?:\/\/tab\.video\.qq\.com\/tab\/GetTabRemoteConfig reject-dict
+
 [Script]
-# 外部广告/H5/埋点：直接返回极小 204，减少 REJECT 后反复重试
 http-request ^https?:\/\/(.*\.)?(jetmobo|lipanwuxian)\.com\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-外部广告空响应, enable=true
 http-request ^https?:\/\/(.*\.)?liulianglf\.cn\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-外部广告空响应CN, enable=true
 http-request ^https?:\/\/ef-dongfeng\.tanx\.com\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-Tanx空响应, enable=true
 http-request ^https?:\/\/sdkreport\.e\.qq\.com\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-广告上报空响应, enable=true
 http-request ^https?:\/\/(iacc|iacc\.rec)\.qq\.com\/.* script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-iacc空响应, enable=true
 http-request ^https?:\/\/rdelivery\.qq\.com\/(?:v1\/statistic\/report|v3\/config\/pull) script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-rdelivery空配置, enable=true
-
-# i.video 请求体：清掉广告请求上下文，阻止服务端下发部分广告 feed
+http-request ^https?:\/\/(?:vfiles|wfiles|vip\.image\.video)\.(?:gtimg|qpic)\.cn\/(?:wuji_dashboard\/xy\/starter|wupload\/xy\/(?:promotionTest|starter|universal)|wupload\/ad_control_config_test|wupload\/vip\.vip_area_level_opration)\/ script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-启动页素材空响应, enable=true
+http-response ^https:\/\/i\.video\.qq\.com\/$ requires-body=true, binary-body-mode=true, script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-iVideo开屏配置过滤, enable=true
 http-request ^https:\/\/i\.video\.qq\.com\/$ requires-body=true, binary-body-mode=true, script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-iVideo请求广告清理, enable=true
 
-# i.video 响应体：只做同字节长度替换；独立广告 feed 直接 204；不碰视频 CDN
-http-response ^https:\/\/i\.video\.qq\.com\/$ requires-body=true, binary-body-mode=true, script-path=https://raw.githubusercontent.com/zijinan/loon/main/Loon/script/tencent-video-adblock.js, timeout=10, tag=腾讯视频-iVideo广告字段过滤, enable=true
-
 [MITM]
-hostname = i.video.qq.com, iacc.qq.com, iacc.rec.qq.com, rdelivery.qq.com, jetmobo.com, *.jetmobo.com, lipanwuxian.com, *.lipanwuxian.com, liulianglf.cn, *.liulianglf.cn, ef-dongfeng.tanx.com, sdkreport.e.qq.com
+hostname = i.video.qq.com, iacc.qq.com, iacc.rec.qq.com, rdelivery.qq.com, vfiles.gtimg.cn, wfiles.gtimg.cn, vip.image.video.qpic.cn, config.ab.qq.com, tab.video.qq.com, jetmobo.com, *.jetmobo.com, lipanwuxian.com, *.lipanwuxian.com, liulianglf.cn, *.liulianglf.cn, ef-dongfeng.tanx.com, sdkreport.e.qq.com
